@@ -1,0 +1,10 @@
+{
+   "modo_prod":{
+      "webhook":"https://script.google.com/macros/s/AKfycbxaT7ZnJM9OM1lWmI4TrW2cxo6w4Cv4PxMzdobm0YjVcBb_6EqgiHKn2jLq50OnEL0S/exec",
+      "dir":"gestaomesas"
+   },
+   "modo_dev":{
+      "webhook":"https://script.google.com/macros/s/AKfycbwIrUxD-gn5IRCbxtmkt-nLwgt2n5vQZRSMArOnvw28hjyPUOLKbyP9Ma1mTmTYiVHL/exec", 
+      "dir":"gestaomesas-dev"
+   }
+}

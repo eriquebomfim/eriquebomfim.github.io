@@ -1,0 +1,1 @@
+{"name":"gerenciador","version":"1.0.0","description":"gerenciador de aplicacoes","main":"gerenciador.js","scripts":{"test":"echo \"Error: no test specified\" && exit 1"},"author":"Erique Bomfim","license":"ISC","dependencies":{"prompt-sync":"^4.2.0"}}

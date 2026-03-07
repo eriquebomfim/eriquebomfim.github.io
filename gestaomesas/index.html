@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>eMesas</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.9/flatpickr.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+        }
+        #app {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            padding: 0 5rem;
+        }
+        p {
+            text-align: center;
+        }
+        #loadingOverlay {
+            display: block;
+            text-align: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            background-color: #fff;            
+            font-size: 1em;            
+            justify-content: center;
+            z-index: 999;
+            font-weight: 600;
+            position: fixed;
+        }
+        #content {
+            display: none;
+        }
+        .bloco{
+            margin-top: 5px;
+        }
+
+        td.semana, td.data {
+            text-align: center;
+            font-weight: bold;
+            padding: 5px;
+            border-radius: 6px;
+            color: #2d3a5a;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            font-size: 1.12em;
+            letter-spacing: 0.5px;
+        }
+        td.ocupante{
+            text-align: center;
+            background-color: #e0e7ff;
+            border-radius: 6px;
+            margin: 8px 0;
+            padding: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+            border: none;
+            font-size: 1.1em;
+            user-select: none;
+        }
+        td.ocupante {
+            background-color: #e0e7ff; 
+            color: #aaa; /* Tom mais claro*/
+            cursor: not-allowed;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        td.ocupante.livre {
+            background-color: #d4f8e8;
+            color: #217a3a;
+            cursor: pointer;
+            opacity: 1;
+            pointer-events: auto;
+            border: 2px dashed #4ade80;
+        }
+        td.me{
+            background-color: #fef3c7;
+            color: #b45309;
+            cursor: pointer;
+            border: 2px dashed #f59e0b;
+            pointer-events: auto;
+        }
+        td.me:hover {
+            background-color: #fde68a;
+            color: #92400e;
+        }
+
+        h1 {
+            position: fixed;
+            top: -16px;
+            width: 100vw;
+            z-index: 1000;
+            text-align: center;
+            background: linear-gradient(to right, #4a148c, #880e4f);
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            font-size: 1.5em;
+            padding:9px 0px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            border-bottom: 3px solid #ba68c8;
+            margin-left: -7px;
+        }
+
+        .semana {
+            position: sticky;
+            top: 50px; /* Ajuste conforme necessário*/
+            background-color: #6a68eb !important; /* Cor de fundo mais escura*/
+            color:#fff !important; /* Cor do texto mais clara*/
+            z-index: 999;
+            width: 100vw;
+        }
+        .data {
+            position: sticky;
+            top: 82px; /* Ajuste conforme necessário*/
+            background-color: rgba(106, 104, 235, 0.8); /* Levemente mais claro que .semana*/
+            color:#fff !important; /* Cor do texto mais clara*/
+            z-index: 998;
+            width: 100vw;
+        }
+        
+        table{
+        	margin-top: 3vh
+        } 
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            background-color: #fff;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            z-index: 998;
+            display: flex;
+            justify-content: space-around;
+        }        
+        .hiddens {
+            visibility: hidden;
+        }
+        footer button {
+            background-color: white;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 1.5em;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .carregando {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 70vh;
+            padding-bottom: 11em;
+        }
+        .filtered .ocupante:not(.me):not(.livre){
+            display: none;
+        }
+        #filterButton {
+            filter: opacity(0.5);
+        }
+        .filtered #filterButton {
+            filter: none;
+        }
+        .flatpickr-calendar {
+            position: fixed;
+            top: 40vh !important;
+            left: 42% !important;
+            z-index: 1000;
+            width: 300px;
+            display: none; /* Esconde o calendário inicialmente */
+        }
+        @media screen and (max-width:486px) {
+            #app{
+                padding: 0 0.5rem;
+            }
+            h1{
+                width: 102vw;
+                padding-left: 0.3rem;
+            }
+        }
+    </style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.9/flatpickr.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.9/l10n/pt.js"></script>
+<script>
+    toast = function (msg, timer = 3000) {
+        var display = document.querySelector(".toast");
+        if (!display) {
+            display = document.createElement("div");
+            display.classList.add("toast");
+            display.style = 'position:fixed;z-index:999;bottom:0px;background-color:lightgreen;color:darkgreen;text-align:center;width:100vw;padding:1em 0;';
+            document.body.append(display);
+        }
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            display.style.display = "none";
+        }, timer);    
+        display.style.display = "block";
+        display.innerHTML = msg;
+    }    
+</script>
+<script>
+    var calendarInput;
+    var calendarFlatpickr;
+    const baseurl = "https://script.google.com/macros/s/AKfycbxaT7ZnJM9OM1lWmI4TrW2cxo6w4Cv4PxMzdobm0YjVcBb_6EqgiHKn2jLq50OnEL0S/exec";
+    const isMobile = (/Mobi|Android/i.test(navigator.userAgent));
+
+    const openCalendar = () => {     
+   
+        if (isMobile) {
+            calendarInput.click();
+            return;
+        }
+        calendarFlatpickr.toggle()
+    }
+
+    const filter = (filter) => {
+        const body = document.querySelector('body');
+        body.classList.toggle('filtered');
+    }
+
+    const loader = {
+        show: (msg = "", autoclose = false) => {
+            const loadingOverlay = document.querySelector('#loadingOverlay');
+            loadingOverlay.style.display = 'flex';
+            if (msg) {
+                loadingOverlay.innerHTML = msg;
+            }
+            else {
+                loadingOverlay.innerHTML = `Por favor, aguarde...`;
+            }
+            document.querySelector('#content').style.display = 'none';
+            if (autoclose) {
+                setTimeout(() => {
+                    loader.hide();
+                }, autoclose || 5000); // Fecha automaticamente após 5 segundos
+            }
+        },
+        hide: () => {
+            const loadingOverlay = document.querySelector('#loadingOverlay');
+            loadingOverlay.style.display = 'none';
+            document.querySelector('#content').style.display = 'block';
+        }
+    }
+    
+    const init = () => {
+
+        calendarInput = document.querySelector('#calendarDate');
+        calendarInput.addEventListener('change', (event) => {
+            const selectedDate = event.target.value;
+            const formattedDate = selectedDate.split('-').join('');
+            const dataElements = document.querySelectorAll('.bloco');
+            dataElements.forEach(element => {
+                const [year, month, day] = element.dataset.date.substr(0,10).split('-')
+                const formattedElementDate = `${year}${month}${day}`;
+                if (formattedElementDate === formattedDate) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            });
+        }); 
+        // implement flatpickr para desktop
+        if (!isMobile) {
+            calendarFlatpickr = flatpickr(calendarInput, {
+                dateFormat: "Y-m-d",
+                locale: "pt",
+                position: "above",
+                allowInput: true,      
+                onReady: (selectedDates, dateStr, instance) => {
+                    calendarInput.style.display = 'none'; // Esconde o input de data
+                    const calendarContainer = document.querySelector('.flatpickr-calendar');
+                    calendarContainer.style.display = 'block'; // Exibe o calendário
+                },
+                onOpen: (selectedDates, dateStr, instance) => {
+                    calendarInput.style.display = 'none'; // Esconde o input de data
+                    const calendarContainer = document.querySelector('.flatpickr-calendar');
+                    calendarContainer.style.display = 'block'; // Exibe o calendário
+                },
+                onChange: (selectedDates, dateStr) => {
+                    const formattedDate = dateStr.split('-').join('');
+                    const dataElements = document.querySelectorAll('.bloco');
+                    dataElements.forEach(element => {
+                        const [year, month, day] = element.dataset.date.substr(0,10).split('-')
+                        const formattedElementDate = `${year}${month}${day}`;
+                        if (formattedElementDate === formattedDate) {
+                            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            calendarFlatpickr.close()
+                        }
+                    });
+                }
+            })
+        }
+
+        const me = document.querySelector('.ocupante.me').innerText.trim();
+
+        document.addEventListener('click', (event) => {
+            if (event.target.classList.contains('ocupante')) {
+                const reserva = event.target.closest('.bloco');
+                const isFree = event.target.classList.contains('livre');
+                const isMe = event.target.classList.contains('me');
+                const sheetname = reserva.dataset.sheetname;
+                const data = reserva.dataset.date;
+                const ddmmyyyy =Intl.DateTimeFormat('pt-BR', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(data));
+                const coluna = reserva.dataset.col;
+                const mesa           = event.target.dataset.mesa;
+                const valorAnterior  = event.target.textContent.trim();
+                if (!isFree && !isMe) {
+                    alert('Este horário já está ocupado.');
+                    return;
+                }
+                if (isMe){
+                    if (confirm(`Você deseja remover sua reserva no dia ${ddmmyyyy}?`)) {
+                        let valor = "";
+                        const url = `${baseurl}?action=update&k=${chave}&sheetname=${sheetname}&mesa=${mesa}&date=${ddmmyyyy}&col=${coluna}&valorAnterior=${valorAnterior}&valorNovo=${valor}`;
+                        event.target.classList.remove('me');
+                        event.target.classList.add('livre');
+                        event.target.textContent = 'Livre';                                
+                        _fetch(url, (response) => {                                
+                                toast('Reserva removida com sucesso.', 3000);
+                        }, true); // Chamada assíncrona para não bloquear a UI
+                    }
+                    return;
+                }  
+                if (isFree) {
+                    const alocacaoExistente = reserva.querySelector('.ocupante.me');
+                    if (alocacaoExistente) {                        
+                        toast('Não é possível reservar outra mesa enquanto já houver uma reserva ativa neste dia.', 5000);
+                        return;
+                    }
+                    if (confirm(`Você deseja reservar a mesa ${mesa} no dia ${ddmmyyyy}?`)) {                            
+                        let valorAnteriorFiltrador = /livre/.test(valorAnterior) ? "" : valorAnterior;
+                        const url = `${baseurl}?action=update&k=${chave}&sheetname=${sheetname}&mesa=${mesa}&date=${ddmmyyyy}&col=${coluna}&valorAnterior=${valorAnteriorFiltrador}&valorNovo=${me}`;
+                        event.target.classList.remove('livre');
+                        event.target.classList.add('me');
+                        event.target.textContent = me;                                                              
+                        _fetch(url, (response) => {                               
+                                toast('Sua solicitação foi enviada com sucesso.<br>Aguarde cerca de 2 minutos para que a reserva seja confirmada na planilha correspondente.', 10000);
+                        }, true); // Chamada assíncrona para não bloquear a UI
+                    }
+                }
+            }
+        });
+    }
+            
+    const _fetch = (url, callback, _async = false)=>{
+        if (!_async){
+            loader.show();
+        } else {
+            toast('Processando...', 500000);
+        }
+        const src = document.createElement('script');
+        src.src = url;
+        src.async = true;
+        document.head.appendChild(src);
+        src.onload = () => {
+            document.head.removeChild(src);
+            if (typeof callback === 'function') {
+                callback(window.resp);
+            }            
+        };
+    }
+    
+    const chave   = new URLSearchParams(window.location.search).get('k') || ''; 
+    window.addEventListener('load', function() {
+
+        const app = document.querySelector('#app');
+        const content = document.querySelector('#content');
+        _fetch(`${baseurl}?action=view&k=${chave}`, (data) => {
+            if (data) {
+                
+                if (/negado/i.test(data)){
+                    document.querySelector('#loadingOverlay').innerHTML = data;                    
+                    return;
+                }
+                content.innerHTML = data;
+                loader.hide();
+                init();
+                
+            } else {
+                content.innerHTML = '<p>Erro ao carregar os dados.</p>';
+            }
+        });
+       
+    });
+</script>    
+</head>
+<body>
+    <div id="loadingOverlay">Por favor, aguarde...</div>
+    <h1>eMesas</h1>
+    <div id="app">
+        <p id="content"></p>        
+        <footer>
+            <button id="openCalendar" onclick="openCalendar()"><span class="calendar-icon" style="margin-right: 8px;">📅</span></button>
+            <button id="filterButton" onclick="filter()">⭐</button>
+        </footer>
+    </div>
+    <div class="hiddens"><input type="date" id="calendarDate"/></div>
+</body>
+</html>

@@ -1,0 +1,60 @@
+ <html>
+	<meta http-equiv="X-UA-Compatible" content="IE=9">
+	<meta name="viewport" content="width=device-width">
+	<meta charset="utf-8">
+	<title>SUBTITLE EXTRACTOR</title>
+	<head>
+		<style type="text/css" rel="stylesheet">
+			form{
+				margin:0 auto;
+			}
+			textarea{
+				width:95vw;
+				height:90vh;
+			}
+		</style>
+    <script>
+        function readFileWeb() {
+			const fileInput = document.getElementById('source');
+			const file = fileInput.files[0];
+			const reader = new FileReader();
+
+			reader.onload = function(e) {
+				document.getElementById('content').innerText = e.target.result;
+			}
+
+			reader.readAsText(file);
+		}
+
+		function removeTracksWeb() {
+			let content = document.getElementById('content').value;
+			let tracks = content.split("\n").filter(f=>!/(\d\d:\d)/.test(f));
+			let subtitle = "";
+
+			for (let i = 1; i < tracks.length; i++) {
+					switch(true){
+						case /^[A-Z]/.test(tracks[i]):
+							if (!/(\.|\,|:|;|\!|\?)$/.test(subtitle.trim()) && subtitle != "")
+							subtitle += ". "
+						break;
+						case /^[a-z]/.test(tracks[i].trim()):
+						case /^\w/.test(tracks[i].trim()):    
+						case /(\.|\,|:|;|\!|\?)$/.test(subtitle.trim()):    
+							if (!/\s$/.test(subtitle))
+							subtitle += " "
+						break;
+					}
+					subtitle += tracks[i];
+			}
+
+			document.getElementById('content').value = subtitle;
+		}
+	</script>
+	</head>    
+	<body>
+        <form width="100%">
+            <input type="file" id="source" onchange="readFileWeb()"><button type="button" onclick="removeTracksWeb()">remove tracks</button><br>
+            <textarea id="content" placeholder="copie aqui o conteudo do arquivo de subs..."></textarea>
+        </form>
+	</body>
+</html>
