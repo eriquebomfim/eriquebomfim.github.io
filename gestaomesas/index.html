@@ -422,6 +422,7 @@
         me: '',
         dates: new Map(),
         holidayDates: new Set(),
+        suspendedDates: new Set(),
         freeDeskPairs: [],
         myDeskPairs: [],
         longPressTimer: null,
@@ -518,6 +519,7 @@
     const parseBackendData = () => {
         state.dates = new Map();
         state.holidayDates = new Set();
+        state.suspendedDates = new Set();
         state.freeDeskPairs = [];
         state.myDeskPairs = [];
 
@@ -537,6 +539,7 @@
                 freeSeats: [],
                 mySeat: null,
                 hasHoliday: false,
+                hasSuspendedOffice: false,
                 hasAnySeat: false
             };
 
@@ -547,6 +550,9 @@
                 info.hasAnySeat = true;
                 if (/FERIADO/i.test(text)) {
                     info.hasHoliday = true;
+                }
+                if (/EXPEDIENTE\s+SUSPENSO/i.test(text)) {
+                    info.hasSuspendedOffice = true;
                 }
                 if (occupant.classList.contains('livre')) {
                     info.freeSeats.push({ mesa, element: occupant });
@@ -563,6 +569,9 @@
 
             if (info.hasHoliday) {
                 state.holidayDates.add(isoDate);
+            }
+            if (info.hasSuspendedOffice) {
+                state.suspendedDates.add(isoDate);
             }
             state.dates.set(isoDate, info);
         });
@@ -589,7 +598,8 @@
         html.push('<span class="legend-pill legend-green">Verde: livre para reservar</span>');
         html.push('<span class="legend-pill legend-yellow">Amarelo: sua mesa (clique para remover)</span>');
         html.push('<span class="legend-pill legend-red">Vermelho: sem vagas (somente leitura)</span>');
-        html.push('<span class="legend-pill legend-disabled">Cinza: fim de semana/feriado</span>');
+        html.push('<span class="legend-pill legend-disabled">Cinza: fim de semana</span>');
+        html.push('<span class="legend-pill" style="background:#f8e9ee;border-color:#c98ea0;">Vinho: feriado/expediente suspenso</span>');
         html.push('</div>');
 
         monthKeys.forEach((monthKey) => {
@@ -613,14 +623,15 @@
                 const isoDate = `${String(year).padStart(4, '0')}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 const dateInfo = state.dates.get(isoDate);
                 const holiday = state.holidayDates.has(isoDate);
+                const suspendedOffice = state.suspendedDates.has(isoDate);
                 const weekend = isWeekend(isoDate);
-                const disabledByRule = weekend || holiday;
+                const disabledByRule = weekend || holiday || suspendedOffice;
 
                 let klass = 'calendar-day is-disabled';
-                let meta = weekend ? 'Fim de semana' : (holiday ? 'Feriado' : 'Sem dados');
+                let meta = weekend ? 'Fim de semana' : (suspendedOffice ? 'Expediente suspenso' : (holiday ? 'Feriado' : 'Sem dados'));
                 let readOnlyFlag = '1';
 
-                if (holiday) {
+                if (holiday || suspendedOffice) {
                     klass = 'calendar-day is-holiday';
                 }
 
@@ -726,7 +737,7 @@
 
     const handleCalendarAction = (isoDate) => {
         const info = state.dates.get(isoDate);
-        if (!info || isWeekend(isoDate) || state.holidayDates.has(isoDate)) {
+        if (!info || isWeekend(isoDate) || state.holidayDates.has(isoDate) || state.suspendedDates.has(isoDate)) {
             return;
         }
         if (info.mySeat && info.mySeat.element) {
