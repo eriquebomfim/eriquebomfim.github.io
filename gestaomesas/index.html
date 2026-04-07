@@ -181,9 +181,26 @@
             gap: 4px;
             position: relative;
         }
+        .calendar-day::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            pointer-events: none;
+            background: var(--temperature-overlay, transparent);
+            opacity: var(--temperature-opacity, 0);
+            transition: opacity 0.2s ease;
+        }
+        .calendar-day > * {
+            position: relative;
+            z-index: 1;
+        }
         .calendar-day.empty {
             background: transparent;
             border-color: transparent;
+        }
+        .calendar-day.empty::before {
+            display: none;
         }
         .calendar-day .day-number {
             font-weight: 700;
@@ -529,19 +546,12 @@
         }
 
         const weightedRatio = Math.pow(normalized, 0.88);
-        const hue = Math.round(lerp(148, 6, weightedRatio));
-        const saturation = Math.round(lerp(54, 78, weightedRatio));
-        const lightness = Math.round(lerp(97, 36, weightedRatio));
-        const borderLightness = Math.max(30, lightness - 12);
-        const textLightness = lightness <= 58 ? 97 : 21;
-        const badgeBgLightness = Math.max(14, lightness - 20);
-        const badgeTextLightness = lightness <= 58 ? 98 : 16;
+        const tempHue = Math.round(lerp(208, 18, weightedRatio));
+        const tempOpacity = lerp(0.04, 0.26, weightedRatio).toFixed(3);
 
         return {
-            backgroundColor: `hsl(${hue} ${saturation}% ${lightness}%)`,
-            borderColor: `hsl(${hue} ${Math.min(72, saturation + 6)}% ${borderLightness}%)`,
-            color: `hsl(${hue} 25% ${textLightness}%)`,
-            badgeStyle: `background:hsl(${hue} ${Math.max(18, saturation - 22)}% ${badgeBgLightness}%);color:hsl(${hue} 24% ${badgeTextLightness}%);border-color:hsl(${hue} ${Math.max(20, saturation - 14)}% ${Math.max(12, badgeBgLightness - 8)}%);`
+            overlayColor: `hsl(${tempHue} 78% 52%)`,
+            overlayOpacity: tempOpacity
         };
     };
 
@@ -714,7 +724,6 @@
                 let readOnlyFlag = '1';
                 let dayStyle = '';
                 let loadBadge = '';
-                let loadBadgeStyle = '';
                 let occupancyLabel = '';
 
                 if (holiday || suspendedOffice) {
@@ -727,8 +736,7 @@
                         const occupancyRatio = dateInfo.deskStats.occupied / dateInfo.deskStats.total;
                         occupancyLabel = getWorkdayOccupancyLabel(occupancyRatio);
                         if (tone) {
-                            dayStyle = ` style="background-color:${tone.backgroundColor};border-color:${tone.borderColor};color:${tone.color};"`;
-                            loadBadgeStyle = ` style="${tone.badgeStyle}"`;
+                            dayStyle = ` style="--temperature-overlay:${tone.overlayColor};--temperature-opacity:${tone.overlayOpacity};"`;
                         }
                         loadBadge = `${dateInfo.deskStats.free}/${dateInfo.deskStats.occupied}`;
                     }
@@ -753,7 +761,7 @@
                 html.push('<span class="day-head">');
                 html.push(`<span class="day-number">${day}</span>`);
                 if (loadBadge) {
-                    html.push(`<span class="day-load" title="Mesas livres/ocupadas (total: ${dateInfo.deskStats.total})"${loadBadgeStyle}>${loadBadge}</span>`);
+                    html.push(`<span class="day-load" title="Mesas livres/ocupadas (total: ${dateInfo.deskStats.total})">${loadBadge}</span>`);
                 }
                 html.push('</span>');
                 html.push(`<span class="day-meta">${meta}</span>`);
