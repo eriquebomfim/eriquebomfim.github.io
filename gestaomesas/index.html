@@ -192,6 +192,10 @@
             line-height: 1.2;
             color: #1f2937;
         }
+        .calendar-day.is-pressing {
+            outline: 2px solid #2563eb;
+            outline-offset: 1px;
+        }
         .calendar-day.is-green {
             background-color: var(--verde);
             cursor: pointer;
@@ -212,8 +216,11 @@
             color: #6b7280;
             cursor: not-allowed;
         }
-        .calendar-day[disabled] {
-            pointer-events: none;
+        .calendar-day.is-holiday {
+            background-color: #eef8ff;
+            color: #0f4c81;
+            cursor: not-allowed;
+            border-color: #b8dcf7;
         }
         .calendar-legend {
             display: flex;
@@ -288,6 +295,66 @@
             opacity: 0.4;
             pointer-events: none;
         }
+        .day-dialog-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.36);
+            z-index: 1200;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+        .day-dialog {
+            width: min(520px, 96vw);
+            max-height: 78vh;
+            overflow: auto;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 16px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid #dbe2f1;
+            padding: 14px;
+        }
+        .day-dialog h3 {
+            margin: 0 0 8px;
+            font-size: 1rem;
+            color: #1e3a8a;
+        }
+        .day-dialog .subtitle {
+            font-size: 0.82rem;
+            color: #334155;
+            margin-bottom: 10px;
+        }
+        .day-dialog table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+            font-size: 0.88rem;
+        }
+        .day-dialog th,
+        .day-dialog td {
+            border-bottom: 1px solid #e5e7eb;
+            padding: 8px 6px;
+            text-align: left;
+            vertical-align: top;
+        }
+        .day-dialog th {
+            background: #f3f6ff;
+            position: sticky;
+            top: 0;
+        }
+        .day-dialog-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+        .day-dialog-actions button {
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: #fff;
+            padding: 6px 10px;
+            cursor: pointer;
+        }
         .flatpickr-calendar {
             position: fixed;
             top: 32vh !important;
@@ -356,7 +423,10 @@
         dates: new Map(),
         holidayDates: new Set(),
         freeDeskPairs: [],
-        myDeskPairs: []
+        myDeskPairs: [],
+        longPressTimer: null,
+        longPressTriggered: false,
+        longPressTarget: null
     };
 
     const openCalendar = () => {
@@ -547,26 +617,29 @@
                 const disabledByRule = weekend || holiday;
 
                 let klass = 'calendar-day is-disabled';
-                let disabledAttr = 'disabled';
                 let meta = weekend ? 'Fim de semana' : (holiday ? 'Feriado' : 'Sem dados');
+                let readOnlyFlag = '1';
+
+                if (holiday) {
+                    klass = 'calendar-day is-holiday';
+                }
 
                 if (!disabledByRule && dateInfo) {
                     if (dateInfo.mySeat) {
                         klass = 'calendar-day is-yellow';
-                        disabledAttr = '';
+                        readOnlyFlag = '0';
                         meta = `Sua mesa: ${dateInfo.mySeat.mesa}`;
                     } else if (dateInfo.freeSeats.length) {
                         klass = 'calendar-day is-green';
-                        disabledAttr = '';
-                        meta = `Livre: ${dateInfo.freeSeats[0].mesa}`;
+                        readOnlyFlag = '0';
+                        meta = 'Livre';
                     } else {
                         klass = 'calendar-day is-red';
-                        disabledAttr = 'disabled';
                         meta = 'Sem vagas';
                     }
                 }
 
-                html.push(`<button class="${klass}" type="button" data-date="${isoDate}" ${disabledAttr}>`);
+                html.push(`<button class="${klass}" type="button" data-date="${isoDate}" data-readonly="${readOnlyFlag}">`);
                 html.push(`<span class="day-number">${day}</span>`);
                 html.push(`<span class="day-meta">${meta}</span>`);
                 html.push('</button>');
@@ -668,6 +741,46 @@
         toast('Sem mesas disponíveis nesta data.', 3000);
     };
 
+    const showDayDetailsDialog = (isoDate) => {
+        const dialog = document.querySelector('#dayInfoDialog');
+        const title = document.querySelector('#dayInfoTitle');
+        const subtitle = document.querySelector('#dayInfoSubtitle');
+        const body = document.querySelector('#dayInfoBody');
+        if (!dialog || !title || !subtitle || !body) {
+            return;
+        }
+
+        const info = state.dates.get(isoDate);
+        title.textContent = `Detalhes de ${toBRDate(isoDate)}`;
+        subtitle.textContent = 'Somente leitura: todas as mesas e ocupantes da data selecionada.';
+
+        if (!info || !info.block) {
+            body.innerHTML = '<tr><td colspan="2">Sem dados para esta data.</td></tr>';
+        } else {
+            const occupants = info.block.querySelectorAll('.ocupante');
+            if (!occupants.length) {
+                body.innerHTML = '<tr><td colspan="2">Sem mesas cadastradas para esta data.</td></tr>';
+            } else {
+                const rows = [];
+                occupants.forEach((occ) => {
+                    const mesa = occ.dataset.mesa || '-';
+                    const nome = occ.textContent.trim() || '-';
+                    rows.push(`<tr><td>${mesa}</td><td>${nome}</td></tr>`);
+                });
+                body.innerHTML = rows.join('');
+            }
+        }
+
+        dialog.style.display = 'flex';
+    };
+
+    const hideDayDetailsDialog = () => {
+        const dialog = document.querySelector('#dayInfoDialog');
+        if (dialog) {
+            dialog.style.display = 'none';
+        }
+    };
+
     const initClassicDatePicker = () => {
         calendarInput = document.querySelector('#calendarDate');
         calendarInput.addEventListener('change', (event) => {
@@ -720,7 +833,51 @@
     };
 
     const initEvents = () => {
+        document.addEventListener('pointerdown', (event) => {
+            const calendarDayButton = event.target.closest('.calendar-day');
+            if (!calendarDayButton || !calendarDayButton.dataset.date) {
+                return;
+            }
+
+            clearTimeout(state.longPressTimer);
+            state.longPressTriggered = false;
+            state.longPressTarget = calendarDayButton;
+            calendarDayButton.classList.add('is-pressing');
+
+            state.longPressTimer = setTimeout(() => {
+                state.longPressTriggered = true;
+                showDayDetailsDialog(calendarDayButton.dataset.date);
+            }, 3000);
+        });
+
+        const cancelLongPress = () => {
+            clearTimeout(state.longPressTimer);
+            if (state.longPressTarget) {
+                state.longPressTarget.classList.remove('is-pressing');
+            }
+            state.longPressTarget = null;
+        };
+
+        document.addEventListener('pointerup', cancelLongPress);
+        document.addEventListener('pointercancel', cancelLongPress);
+        document.addEventListener('pointerleave', cancelLongPress);
+
         document.addEventListener('click', (event) => {
+            const closeDialogBtn = event.target.closest('#closeDayInfoDialog');
+            if (closeDialogBtn) {
+                hideDayDetailsDialog();
+                return;
+            }
+            if (event.target.id === 'dayInfoDialog') {
+                hideDayDetailsDialog();
+                return;
+            }
+
+            if (state.longPressTriggered) {
+                state.longPressTriggered = false;
+                return;
+            }
+
             if (event.target.classList.contains('ocupante')) {
                 const isFree = event.target.classList.contains('livre');
                 const isMe = event.target.classList.contains('me');
@@ -737,6 +894,9 @@
 
             const calendarDayButton = event.target.closest('.calendar-day');
             if (calendarDayButton && calendarDayButton.dataset.date) {
+                if (calendarDayButton.dataset.readonly === '1') {
+                    return;
+                }
                 handleCalendarAction(calendarDayButton.dataset.date);
             }
         });
@@ -801,6 +961,24 @@
             <button class="classic-only" id="openCalendar" onclick="openCalendar()"><span class="calendar-icon" style="margin-right: 8px;">📅</span></button>
             <button class="classic-only" id="filterButton" onclick="filter()">⭐</button>
         </footer>
+    </div>
+    <div id="dayInfoDialog" class="day-dialog-backdrop" role="dialog" aria-modal="true" aria-labelledby="dayInfoTitle">
+        <div class="day-dialog">
+            <h3 id="dayInfoTitle">Detalhes do dia</h3>
+            <div id="dayInfoSubtitle" class="subtitle"></div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mesa</th>
+                        <th>Ocupante</th>
+                    </tr>
+                </thead>
+                <tbody id="dayInfoBody"></tbody>
+            </table>
+            <div class="day-dialog-actions">
+                <button id="closeDayInfoDialog" type="button">Fechar</button>
+            </div>
+        </div>
     </div>
     <div class="hiddens"><input type="date" id="calendarDate"/></div>
 </body>
