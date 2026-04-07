@@ -636,6 +636,21 @@
         }, true);
     };
 
+    // Encaminha data + primeira mesa livre para o fluxo de alocacao ja existente.
+    const reserveFromSelectedDate = (isoDate, firstFreeDesk) => {
+        const info = state.dates.get(isoDate);
+        if (!info || !firstFreeDesk) {
+            toast('Nao foi possivel identificar mesa livre para a data selecionada.', 3000);
+            return;
+        }
+        const occupantElement = info.freeSeats.find((seat) => seat.mesa === firstFreeDesk)?.element;
+        if (!occupantElement) {
+            toast('A primeira mesa livre nao foi encontrada no bloco da data selecionada.', 3000);
+            return;
+        }
+        reserveBooking(occupantElement);
+    };
+
     const handleCalendarAction = (isoDate) => {
         const info = state.dates.get(isoDate);
         if (!info || isWeekend(isoDate) || state.holidayDates.has(isoDate)) {
@@ -646,7 +661,8 @@
             return;
         }
         if (info.freeSeats.length && info.freeSeats[0].element) {
-            reserveBooking(info.freeSeats[0].element);
+            const firstFreeDesk = info.freeSeats[0].mesa;
+            reserveFromSelectedDate(isoDate, firstFreeDesk);
             return;
         }
         toast('Sem mesas disponíveis nesta data.', 3000);
@@ -719,8 +735,9 @@
                 reserveBooking(event.target);
             }
 
-            if (event.target.classList.contains('calendar-day') && event.target.dataset.date) {
-                handleCalendarAction(event.target.dataset.date);
+            const calendarDayButton = event.target.closest('.calendar-day');
+            if (calendarDayButton && calendarDayButton.dataset.date) {
+                handleCalendarAction(calendarDayButton.dataset.date);
             }
         });
     };
