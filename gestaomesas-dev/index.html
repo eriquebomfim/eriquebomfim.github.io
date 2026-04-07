@@ -179,6 +179,7 @@
             display: flex;
             flex-direction: column;
             gap: 4px;
+            position: relative;
         }
         .calendar-day.empty {
             background: transparent;
@@ -186,6 +187,23 @@
         }
         .calendar-day .day-number {
             font-weight: 700;
+        }
+        .calendar-day .day-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 4px;
+        }
+        .calendar-day .day-load {
+            font-size: 0.62rem;
+            line-height: 1;
+            border-radius: 999px;
+            padding: 3px 6px;
+            font-weight: 700;
+            color: #1f2937;
+            border: 1px solid rgba(0, 0, 0, 0.16);
+            background: rgba(255, 255, 255, 0.55);
+            white-space: nowrap;
         }
         .calendar-day .day-meta {
             font-size: 0.68rem;
@@ -489,6 +507,57 @@
         return day === 0 || day === 6;
     };
 
+    const getWorkdayOccupancyTone = (deskStats) => {
+        const total = deskStats?.total || 0;
+        const occupied = deskStats?.occupied || 0;
+        if (!total) {
+            return null;
+        }
+
+        const ratio = Math.max(0, Math.min(1, occupied / total));
+        const lerp = (a, b, t) => a + ((b - a) * t);
+
+        let normalized;
+        if (ratio <= 0.5) {
+            normalized = (ratio / 0.5) * 0.5;
+        } else if (ratio <= 0.7) {
+            normalized = 0.5 + (((ratio - 0.5) / 0.2) * 0.25);
+        } else if (ratio <= 0.9) {
+            normalized = 0.75 + (((ratio - 0.7) / 0.2) * 0.2);
+        } else {
+            normalized = 0.95 + (((ratio - 0.9) / 0.1) * 0.05);
+        }
+
+        const weightedRatio = Math.pow(normalized, 0.88);
+        const hue = Math.round(lerp(148, 6, weightedRatio));
+        const saturation = Math.round(lerp(54, 78, weightedRatio));
+        const lightness = Math.round(lerp(97, 36, weightedRatio));
+        const borderLightness = Math.max(30, lightness - 12);
+        const textLightness = lightness <= 58 ? 97 : 21;
+        const badgeBgLightness = Math.max(14, lightness - 20);
+        const badgeTextLightness = lightness <= 58 ? 98 : 16;
+
+        return {
+            backgroundColor: `hsl(${hue} ${saturation}% ${lightness}%)`,
+            borderColor: `hsl(${hue} ${Math.min(72, saturation + 6)}% ${borderLightness}%)`,
+            color: `hsl(${hue} 25% ${textLightness}%)`,
+            badgeStyle: `background:hsl(${hue} ${Math.max(18, saturation - 22)}% ${badgeBgLightness}%);color:hsl(${hue} 24% ${badgeTextLightness}%);border-color:hsl(${hue} ${Math.max(20, saturation - 14)}% ${Math.max(12, badgeBgLightness - 8)}%);`
+        };
+    };
+
+    const getWorkdayOccupancyLabel = (ratio) => {
+        if (ratio >= 0.9) {
+            return 'Lotado';
+        }
+        if (ratio >= 0.7) {
+            return 'Crítico';
+        }
+        if (ratio >= 0.5) {
+            return 'Moderado';
+        }
+        return 'Tranquilo';
+    };
+
     const setViewMode = (mode) => {
         const finalMode = mode === VIEW_MODES.CLASSIC ? VIEW_MODES.CLASSIC : VIEW_MODES.CALENDAR;
         localStorage.setItem(VIEW_MODE_KEY, finalMode);
@@ -540,7 +609,12 @@
                 mySeat: null,
                 hasHoliday: false,
                 hasSuspendedOffice: false,
-                hasAnySeat: false
+                hasAnySeat: false,
+                deskStats: {
+                    free: 0,
+                    occupied: 0,
+                    total: 0
+                }
             };
 
             const occupants = block.querySelectorAll('.ocupante');
@@ -557,6 +631,8 @@
                 if (occupant.classList.contains('livre')) {
                     info.freeSeats.push({ mesa, element: occupant });
                     state.freeDeskPairs.push([info.brDate, mesa]);
+                    info.deskStats.free += 1;
+                    info.deskStats.total += 1;
                 }
                 if (occupant.classList.contains('me')) {
                     info.mySeat = { mesa, element: occupant, text };
@@ -564,6 +640,10 @@
                     if (!me) {
                         me = text;
                     }
+                }
+                if (!occupant.classList.contains('livre') && !/FERIADO|EXPEDIENTE\s+SUSPENSO/i.test(text)) {
+                    info.deskStats.occupied += 1;
+                    info.deskStats.total += 1;
                 }
             });
 
@@ -600,6 +680,8 @@
         html.push('<span class="legend-pill legend-red">Vermelho: sem vagas (somente leitura)</span>');
         html.push('<span class="legend-pill legend-disabled">Cinza: fim de semana</span>');
         html.push('<span class="legend-pill" style="background:#f8e9ee;border-color:#c98ea0;">Vinho: feriado/expediente suspenso</span>');
+        html.push('<span class="legend-pill">Selo X/Y: livres/ocupadas</span>');
+        html.push('<span class="legend-pill">Tom do dia: claro/frio = tranquilo, escuro/quente = lotado</span>');
         html.push('</div>');
 
         monthKeys.forEach((monthKey) => {
@@ -630,12 +712,26 @@
                 let klass = 'calendar-day is-disabled';
                 let meta = weekend ? 'Fim de semana' : (suspendedOffice ? 'Expediente suspenso' : (holiday ? 'Feriado' : 'Sem dados'));
                 let readOnlyFlag = '1';
+                let dayStyle = '';
+                let loadBadge = '';
+                let loadBadgeStyle = '';
+                let occupancyLabel = '';
 
                 if (holiday || suspendedOffice) {
                     klass = 'calendar-day is-holiday';
                 }
 
                 if (!disabledByRule && dateInfo) {
+                    if (dateInfo.deskStats.total > 0) {
+                        const tone = getWorkdayOccupancyTone(dateInfo.deskStats);
+                        const occupancyRatio = dateInfo.deskStats.occupied / dateInfo.deskStats.total;
+                        occupancyLabel = getWorkdayOccupancyLabel(occupancyRatio);
+                        if (tone) {
+                            dayStyle = ` style="background-color:${tone.backgroundColor};border-color:${tone.borderColor};color:${tone.color};"`;
+                            loadBadgeStyle = ` style="${tone.badgeStyle}"`;
+                        }
+                        loadBadge = `${dateInfo.deskStats.free}/${dateInfo.deskStats.occupied}`;
+                    }
                     if (dateInfo.mySeat) {
                         klass = 'calendar-day is-yellow';
                         readOnlyFlag = '0';
@@ -648,10 +744,18 @@
                         klass = 'calendar-day is-red';
                         meta = 'Sem vagas';
                     }
+                    if (occupancyLabel) {
+                        meta = `${meta} · ${occupancyLabel}`;
+                    }
                 }
 
-                html.push(`<button class="${klass}" type="button" data-date="${isoDate}" data-readonly="${readOnlyFlag}">`);
+                html.push(`<button class="${klass}" type="button" data-date="${isoDate}" data-readonly="${readOnlyFlag}"${dayStyle}>`);
+                html.push('<span class="day-head">');
                 html.push(`<span class="day-number">${day}</span>`);
+                if (loadBadge) {
+                    html.push(`<span class="day-load" title="Mesas livres/ocupadas (total: ${dateInfo.deskStats.total})"${loadBadgeStyle}>${loadBadge}</span>`);
+                }
+                html.push('</span>');
                 html.push(`<span class="day-meta">${meta}</span>`);
                 html.push('</button>');
             }
