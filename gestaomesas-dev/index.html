@@ -212,20 +212,22 @@
             gap: 4px;
         }
         .calendar-day .day-load {
-            font-size: 0.62rem;
+            font-size: 0.56rem;
             line-height: 1;
             border-radius: 999px;
-            padding: 3px 6px;
+            padding: 2px 4px;
             font-weight: 700;
             color: #1f2937;
             border: 1px solid rgba(0, 0, 0, 0.16);
             background: rgba(255, 255, 255, 0.55);
             white-space: nowrap;
+            flex-shrink: 0;
         }
         .calendar-day .day-meta {
-            font-size: 0.68rem;
+            font-size: 0.64rem;
             line-height: 1.2;
             color: #1f2937;
+            margin-top: auto;
         }
         .calendar-day.is-pressing {
             outline: 2px solid #2563eb;
@@ -408,11 +410,16 @@
             }
             .calendar-day {
                 min-height: 56px;
-                font-size: 0.74rem;
-                padding: 5px;
+                font-size: 0.72rem;
+                padding: 4px;
+                gap: 3px;
+            }
+            .calendar-day .day-load {
+                font-size: 0.48rem;
+                padding: 1px 3px;
             }
             .calendar-day .day-meta {
-                font-size: 0.62rem;
+                font-size: 0.56rem;
             }
             footer {
                 gap: 8px;
