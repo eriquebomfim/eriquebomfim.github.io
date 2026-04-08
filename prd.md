@@ -1,33 +1,92 @@
-# overview
+# PRD - eMesas (Calendario Compacto)
 
-uma aplicação de alocação de mesas para os servidores da cds do mpba. Permite adicionar ou remover uma alocação de mesa.
+## 1. Visao Geral
+Aplicacao web para alocacao de mesas da CDS/MPBA, permitindo reservar e remover reservas de forma simples. A interface principal atual e um calendario compacto mensal, com alternativa de visualizacao classica.
 
-# definições
-- para o desenvolvimento, atue somente nos arquivos em /gestaomesas-dev;
-- usuário atual: tem o nome definido pela constante *me*;
-- o arquivo /gestaomesas-dev/resp contém uma tabela que é gerada no backend contendo todas as aloções ;por data, nome da pessoa e a mesa alocada;
-- quando uma mesa não está alocada, ela é sinalizada com a class "livre";
-- na aplicação atual, é possível efetuar uma alocação ou remover (isso está funcionando);
-- a interface atual continuará em funcionamento, mas não será mais a principal;
-- a interface principal será uma interface mais compacta:
-- mesa: um espaço para execução de atividades quando o servidor estiver presencialmente no setor;
-e.g. "Mesa 24"
--- os meses serão renderizados na forma de calendário e.g.
-Janeiro/2026
-Fevereiro/2026
-Março/2026
-- calendário: um widget de calendário, contendo todos os dias, mas *disabled* em finais de semana ou feriados:
--- cada dia do calendário (exceto finais de semana e feriados) terão background-color "verde-claro" se, segundo o conteudo em resp naquela data exista pelo menos 1 mesa livre;
--- caso não exista mesa livre nem mesa ocupada pelo usuário logado, a data terá um background-color "vermelho" e deve ser read-only (ou seja, não é possível fazer ou desfazer uma alocação);
--- caso exista mesa livre e nenhuma mesa ocupada pelo usuário logado naquela data, background-color do dia "verde-claro" e é permitido ao usuário logado efetuar uma alocação;
--- caso exista uma alocação para o usuário logado em uma data, o background será amarelo (idem a interface autal) e é permitido ao usuário logado desfazer sua alocação;
--- quando o usuário logado clicar numa data com mesa livre, execute o mesmo comando disponivel na interface atual; neste caso, utilize os parâmetros da primeira mesa livre naquela data;
+## 2. Escopo Atual (Versao Consolidada)
+- Reservar mesa livre em um dia util.
+- Remover reserva propria em um dia util.
+- Exibir meses em grade de calendario (compacto).
+- Alternar entre visao calendario e visao classica.
+- Persistir preferencia de visualizacao em localStorage.
+- Exibir detalhes completos do dia por pressao longa no card do dia.
+- Exibir ocupacao por dia via selo X/Y (livres/ocupadas).
+- Exibir etiqueta de estado de ocupacao (Tranquilo, Moderado, Critico, Lotado).
+- Aplicar temperatura visual por lotacao sem alterar a cor base do status do dia (apenas overlay com alpha).
 
-# estratégia de execução
-- step 1: faça uma leitura do arquivo resp contendo dados de exemplo que são gerados pelo backend;
-- step 2: monte uma estrutura de dados para facilitar no desenvolvimento da solução;
-- step 3: separe todas as datas contidos em 'resp' que contenha uma mesa com texto 'FERIADO';
-- step 4: separe todas as mesas livres: armazene data e numero da mesa e.g. ["dd/mm/yyyy","mesa-"]
-- step 5: separe todas as mesas com o nome do usuário atual
-- step 6: crie a interface de calendário; 
-- step 7: adicione um toggle onde o usuario possa alterar entre a interface atual e a interface de calendários (implemente feature onde armazene no localStorage o último estado do toggle)
+## 3. Definicoes e Fontes de Dados
+- Ambiente principal de desenvolvimento: /gestaomesas-dev.
+- Arquivo de producao espelho: /gestaomesas.
+- Usuario atual: nome carregado em runtime e refletido na variavel de estado me.
+- Fonte de dados: HTML retornado pelo backend (action=view), contendo blocos por data e ocupantes por mesa.
+- Mesa livre: celula com classe livre.
+- Reserva propria: celula com classe me.
+- Feriado: ocupante contendo texto FERIADO.
+- Expediente suspenso: ocupante contendo texto EXPEDIENTE SUSPENSO.
+
+## 4. Regras Funcionais
+
+### 4.1 Disponibilidade por dia
+- Dias de fim de semana, feriado ou expediente suspenso sao somente leitura.
+- Dia util com reserva propria: status amarelo, permite remover reserva.
+- Dia util com ao menos uma mesa livre e sem reserva propria: status verde, permite reservar.
+- Dia util sem mesas livres e sem reserva propria: status vermelho, sem acao de reserva.
+
+### 4.2 Acao ao clicar no dia
+- Se houver reserva propria: remove reserva.
+- Se houver mesa livre: reserva automaticamente a primeira mesa livre do dia.
+- Se nao houver vaga: apenas informativo de indisponibilidade.
+
+### 4.3 Contadores e indicadores
+- Selo no canto superior direito do card: X/Y.
+	- X = quantidade de mesas livres.
+	- Y = quantidade de mesas ocupadas.
+- Etiqueta textual de ocupacao no rodape do card:
+	- Tranquilo: ocupacao < 50%.
+	- Moderado: ocupacao >= 50% e < 70%.
+	- Critico: ocupacao >= 70% e < 90%.
+	- Lotado: ocupacao >= 90%.
+
+## 5. Regras Visuais
+
+### 5.1 Cor base (nao alterada pela lotacao)
+- Verde: dia util com vaga.
+- Amarelo: dia util com reserva do usuario.
+- Vermelho: dia util sem vaga.
+- Cinza: fim de semana.
+- Vinho: feriado/expediente suspenso.
+
+### 5.2 Temperatura por lotacao
+- A temperatura visual nao substitui a cor base do card.
+- A temperatura e aplicada por overlay com cor fixa e alpha variavel.
+- Quanto maior a ocupacao, maior a opacidade do overlay.
+
+## 6. UX Mobile (Ajustes Consolidados)
+- Cards mantidos compactos para evitar overflow horizontal.
+- Selo X/Y reduzido em mobile para caber no topo direito sem escapar.
+- Etiqueta de ocupacao fixada na base do card (margin-top auto).
+- Fontes da etiqueta e do selo reduzidas em telas pequenas.
+
+## 7. Interacoes Avancadas
+- Pressao longa (long press) em um dia abre modal de detalhes com todas as mesas e ocupantes da data.
+- Clique no backdrop ou no botao Fechar encerra o modal.
+
+## 8. Persistencia de Estado
+- Chave localStorage: emesas_view_mode.
+- Valores:
+	- calendar
+	- classic
+
+## 9. Criterios de Aceite
+- Calendario renderiza meses e dias corretamente.
+- Regras de clique respeitam disponibilidade do dia.
+- Selo X/Y aparece apenas quando houver dados de mesas no dia util.
+- Etiqueta de ocupacao aparece no rodape do card e segue as faixas definidas.
+- Overlay de temperatura muda apenas alpha, sem trocar cor base do status.
+- Em mobile, selo e etiqueta permanecem dentro do card sem quebra visual.
+- Visao selecionada permanece apos recarregar a pagina.
+
+## 10. Fora de Escopo (Atual)
+- Mudancas no backend de origem de dados.
+- Motor de regras de alocacao com prioridades por equipe/cargo.
+- Relatorios historicos e analytics.
