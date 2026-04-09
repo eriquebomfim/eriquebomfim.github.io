@@ -12,7 +12,11 @@ Aplicacao web para alocacao de mesas da CDS/MPBA, permitindo reservar e remover 
 - Exibir detalhes completos do dia por pressao longa no card do dia.
 - Exibir ocupacao por dia via selo X/Y (livres/ocupadas).
 - Exibir etiqueta de estado de ocupacao (Tranquilo, Moderado, Critico, Lotado).
-- Aplicar temperatura visual por lotacao sem alterar a cor base do status do dia (apenas overlay com alpha).
+- Aplicar temperatura visual por lotacao sem alterar a cor base do status do dia (color-alpha approach).
+- Desabilitar selecao de texto em toda a aplicacao para melhor experiencia de usuario.
+- Cadastrar e gerenciar períodos de acompanhamento (bimestres ou janelas flexíveis).
+- Identificar visualmente o início e o término de um período através de indicadores de canto (etiquetas).
+- Exibir o progresso de dias presenciais em relação à meta do período.
 
 ## 3. Definicoes e Fontes de Dados
 - Ambiente principal de desenvolvimento: /gestaomesas-dev.
@@ -42,10 +46,15 @@ Aplicacao web para alocacao de mesas da CDS/MPBA, permitindo reservar e remover 
 	- X = quantidade de mesas livres.
 	- Y = quantidade de mesas ocupadas.
 - Etiqueta textual de ocupacao no rodape do card:
-	- Tranquilo: ocupacao < 50%.
-	- Moderado: ocupacao >= 50% e < 70%.
-	- Critico: ocupacao >= 70% e < 90%.
-	- Lotado: ocupacao >= 90%.
+	- Tranquilo: ocupacao 0% a 30%.
+	- Moderado: ocupacao 31% a 60%.
+	- Critico: ocupacao 61% a 85%.
+	- Lotado: ocupacao 86% a 100%.
+### 4.4 Gestão de Períodos
+- Definição de Janela: Um período é definido por uma Data de Início e uma Data de Fim, podendo abranger qualquer intervalo de meses.
+- Meta Configurável: Cada período deve possuir um campo para definir a meta de dias presenciais (ex: mínimo de 10 dias, mas permitindo valores superiores).
+- Cálculo de Progresso: O sistema deve contar quantos dias com "reserva própria" (classe me) existem dentro do intervalo definido e comparar com a meta cadastrada.
+- Persistência: Os dados do período (início, fim e meta) devem ser armazenados (localStorage).
 
 ## 5. Regras Visuais
 
@@ -58,8 +67,17 @@ Aplicacao web para alocacao de mesas da CDS/MPBA, permitindo reservar e remover 
 
 ### 5.2 Temperatura por lotacao
 - A temperatura visual nao substitui a cor base do card.
-- A temperatura e aplicada por overlay com cor fixa e alpha variavel.
-- Quanto maior a ocupacao, maior a opacidade do overlay.
+- A temperatura e aplicada usando a mesma cor base do tipo de dia com alpha variavel (color-alpha approach).
+- Cada tipo de dia tem uma cor escura correspondente (verde-escuro, amarelo-escuro, etc.).
+- A opacidade varia linearmente de 0.1 (0% ocupacao) a 1.0 (100% ocupacao).
+- Para dias com ocupacao "Critico" ou "Lotado", o texto (numero e meta) muda para branco (#fff) para melhor contraste.
+
+### 5.3 Indicadores de Período (Etiqueta de Canto)
+- Implementação Visual
+	- Início: O card do dia correspondente à data de início do período deve exibir um triângulo (ribbon) no canto superior esquerdo com o texto "INÍCIO".
+	- Fim: O card do dia correspondente à data de término deve exibir um triângulo no canto inferior direito com o texto "FIM".
+- Estilo: Os indicadores devem utilizar uma cor de destaque (ex: Azul Marinho) com texto em branco para garantir leitura sobre as cores base (Verde, Amarelo, Vermelho).
+- Prioridade de Camada: As etiquetas de canto devem ser renderizadas acima do selo X/Y e da temperatura visual.
 
 ## 6. UX Mobile (Ajustes Consolidados)
 - Cards mantidos compactos para evitar overflow horizontal.
@@ -85,6 +103,10 @@ Aplicacao web para alocacao de mesas da CDS/MPBA, permitindo reservar e remover 
 - Overlay de temperatura muda apenas alpha, sem trocar cor base do status.
 - Em mobile, selo e etiqueta permanecem dentro do card sem quebra visual.
 - Visao selecionada permanece apos recarregar a pagina.
+- Selecao de texto esta desabilitada em toda a aplicacao para melhor experiencia de usuario.
+- Interface permite salvar um período com data de início superior a 2 meses e meta superior a 10 dias.
+- As etiquetas "INÍCIO" e "FIM" aparecem corretamente apenas nos dias exatos definidos no cadastro.
+- O indicador de progresso do período atualiza instantaneamente ao reservar ou remover uma mesa.
 
 ## 10. Fora de Escopo (Atual)
 - Mudancas no backend de origem de dados.
