@@ -444,6 +444,37 @@
                 font-size: 0.88rem;
             }
         }
+
+        /* Period Indicators */
+        .period-indicator {
+            position: absolute;
+            font-size: 0.55rem;
+            font-weight: bold;
+            color: white;
+            padding: 1px 4px;
+            z-index: 20; /* Above day-load badge */
+            pointer-events: none;
+            white-space: nowrap;
+            text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+        }
+        .period-start {
+            top: -1px;
+            left: -1px;
+            background: #1e3a8a; /* Navy blue */
+            border-bottom-right-radius: 3px;
+        }
+        .period-end {
+            bottom: -1px;
+            right: -1px;
+            background: #1e3a8a; /* Navy blue */
+            border-top-left-radius: 3px;
+        }
+        .period-start::after {
+            content: 'INÍCIO';
+        }
+        .period-end::after {
+            content: 'FIM';
+        }
     </style>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.9/flatpickr.min.js"></script>
@@ -484,8 +515,11 @@
         myDeskPairs: [],
         longPressTimer: null,
         longPressTriggered: false,
-        longPressTarget: null
+        longPressTarget: null,
+        periods: [] // Array to store periods {id, startDate, endDate, goal}
     };
+
+    const PERIODS_STORAGE_KEY = 'emesas_periods';
 
     const openCalendar = () => {
         if (document.body.classList.contains('calendar-mode')) {
@@ -788,6 +822,16 @@
                     }
                 }
 
+                // Check if this date is a period start or end
+                let periodIndicator = '';
+                state.periods.forEach(period => {
+                    if (isoDate === period.startDate) {
+                        periodIndicator = '<span class="period-indicator period-start"></span>';
+                    } else if (isoDate === period.endDate) {
+                        periodIndicator = '<span class="period-indicator period-end"></span>';
+                    }
+                });
+
                 html.push(`<button class="${klass}" type="button" data-date="${isoDate}" data-readonly="${readOnlyFlag}"${dayStyle}>`);
                 html.push('<span class="day-head">');
                 html.push(`<span class="day-number">${day}</span>`);
@@ -796,6 +840,9 @@
                 }
                 html.push('</span>');
                 html.push(`<span class="day-meta">${meta}</span>`);
+                if (periodIndicator) {
+                    html.push(periodIndicator);
+                }
                 html.push('</button>');
             }
 
@@ -828,6 +875,7 @@
         _fetch(url, () => {
             parseBackendData();
             renderCompactCalendar();
+            updateCurrentPeriodProgress();
             toast('Reserva removida com sucesso.', 3000);
         }, true);
     };
@@ -859,6 +907,7 @@
         _fetch(url, () => {
             parseBackendData();
             renderCompactCalendar();
+            updateCurrentPeriodProgress();
             toast('Sua solicitação foi enviada com sucesso.<br>Aguarde cerca de 2 minutos para que a reserva seja confirmada na planilha correspondente.', 10000);
         }, true);
     };
@@ -1102,6 +1151,177 @@
             }
         });
     });
+
+    // Period Management Functions
+    const loadPeriods = () => {
+        try {
+            const saved = localStorage.getItem(PERIODS_STORAGE_KEY);
+            state.periods = saved ? JSON.parse(saved) : [];
+            updatePeriodsList();
+            updateCurrentPeriodProgress();
+        } catch (e) {
+            console.error('Error loading periods:', e);
+            state.periods = [];
+        }
+    };
+
+    const savePeriods = () => {
+        try {
+            localStorage.setItem(PERIODS_STORAGE_KEY, JSON.stringify(state.periods));
+            updatePeriodsList();
+            updateCurrentPeriodProgress();
+            // Refresh calendar to show period indicators
+            if (document.body.classList.contains('calendar-mode')) {
+                renderCompactCalendar();
+            }
+        } catch (e) {
+            console.error('Error saving periods:', e);
+            toast('Erro ao salvar período');
+        }
+    };
+
+    const openPeriodManagement = () => {
+        loadPeriods();
+        const dialog = document.getElementById('periodManagementDialog');
+        dialog.style.display = 'flex';
+
+        // Set default dates (today and 2 months from now)
+        const today = new Date().toISOString().split('T')[0];
+        const futureDate = new Date();
+        futureDate.setMonth(futureDate.getMonth() + 2);
+        const futureDateStr = futureDate.toISOString().split('T')[0];
+
+        document.getElementById('periodStartDate').value = today;
+        document.getElementById('periodEndDate').value = futureDateStr;
+        document.getElementById('periodGoal').value = 10;
+    };
+
+    const closePeriodManagement = () => {
+        document.getElementById('periodManagementDialog').style.display = 'none';
+    };
+
+    const savePeriod = () => {
+        const startDate = document.getElementById('periodStartDate').value;
+        const endDate = document.getElementById('periodEndDate').value;
+        const goal = parseInt(document.getElementById('periodGoal').value);
+
+        if (!startDate || !endDate || !goal || goal < 1) {
+            toast('Preencha todos os campos corretamente');
+            return;
+        }
+
+        if (new Date(startDate) > new Date(endDate)) {
+            toast('Data de início deve ser anterior à data de fim');
+            return;
+        }
+
+        const newPeriod = {
+            id: Date.now().toString(),
+            startDate,
+            endDate,
+            goal
+        };
+
+        state.periods.push(newPeriod);
+        savePeriods();
+        toast('Período salvo com sucesso');
+
+        // Clear form
+        document.getElementById('periodStartDate').value = '';
+        document.getElementById('periodEndDate').value = '';
+        document.getElementById('periodGoal').value = 10;
+    };
+
+    const deletePeriod = (id) => {
+        state.periods = state.periods.filter(period => period.id !== id);
+        savePeriods();
+        toast('Período removido');
+    };
+
+    const updatePeriodsList = () => {
+        const container = document.getElementById('periodsList');
+        if (!container) return;
+
+        if (state.periods.length === 0) {
+            container.innerHTML = '<p style="color: #666; font-style: italic;">Nenhum período cadastrado</p>';
+            return;
+        }
+
+        const html = state.periods.map(period => {
+            const start = toBRDate(period.startDate);
+            const end = toBRDate(period.endDate);
+            return `
+                <div style="padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong>${start} - ${end}</strong><br>
+                        <small>Meta: ${period.goal} dias</small>
+                    </div>
+                    <button type="button" onclick="deletePeriod('${period.id}')" style="background: #dc2626; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8em;">
+                        Remover
+                    </button>
+                </div>
+            `;
+        }).join('');
+
+        container.innerHTML = html;
+    };
+
+    const updateCurrentPeriodProgress = () => {
+        const container = document.getElementById('currentPeriodProgress');
+        if (!container) return;
+
+        const today = new Date().toISOString().split('T')[0];
+
+        // Find current period (period that contains today)
+        const currentPeriod = state.periods.find(period =>
+            period.startDate <= today && period.endDate >= today
+        );
+
+        if (!currentPeriod) {
+            container.innerHTML = '<p style="color: #666; font-style: italic;">Nenhum período ativo no momento</p>';
+            return;
+        }
+
+        // Count user's reserved days in this period
+        let reservedDays = 0;
+        const startDate = new Date(currentPeriod.startDate);
+        const endDate = new Date(currentPeriod.endDate);
+
+        for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
+            const isoDate = date.toISOString().split('T')[0];
+            const dateInfo = state.dates.get(isoDate);
+            if (dateInfo && dateInfo.mySeat) {
+                reservedDays++;
+            }
+        }
+
+        const progress = Math.min(100, (reservedDays / currentPeriod.goal) * 100);
+        const progressColor = progress >= 100 ? '#10b981' : progress >= 75 ? '#f59e0b' : '#ef4444';
+
+        container.innerHTML = `
+            <div style="margin-bottom: 10px;">
+                <strong>${toBRDate(currentPeriod.startDate)} - ${toBRDate(currentPeriod.endDate)}</strong><br>
+                <small>Meta: ${currentPeriod.goal} dias presenciais</small>
+            </div>
+            <div style="margin-bottom: 5px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.9em;">
+                    <span>Progresso: ${reservedDays}/${currentPeriod.goal} dias</span>
+                    <span>${progress.toFixed(1)}%</span>
+                </div>
+                <div style="height: 10px; background: #e5e7eb; border-radius: 5px; overflow: hidden; margin-top: 5px;">
+                    <div style="height: 100%; width: ${progress}%; background: ${progressColor}; transition: width 0.3s;"></div>
+                </div>
+            </div>
+            <div style="font-size: 0.85em; color: #666;">
+                ${reservedDays >= currentPeriod.goal ?
+                    '✅ Meta atingida!' :
+                    `Faltam ${currentPeriod.goal - reservedDays} dias para atingir a meta`}
+            </div>
+        `;
+    };
+
+    // Initialize periods on load
+    setTimeout(loadPeriods, 1000);
 </script>
 </head>
 <body>
@@ -1114,6 +1334,7 @@
             <button id="viewModeToggle" onclick="toggleViewMode()">Visão: Calendário</button>
             <button class="classic-only" id="openCalendar" onclick="openCalendar()"><span class="calendar-icon" style="margin-right: 8px;">📅</span></button>
             <button class="classic-only" id="filterButton" onclick="filter()">⭐</button>
+            <button id="periodManagementButton" onclick="openPeriodManagement()">Períodos</button>
         </footer>
     </div>
     <div id="dayInfoDialog" class="day-dialog-backdrop" role="dialog" aria-modal="true" aria-labelledby="dayInfoTitle">
@@ -1131,6 +1352,46 @@
             </table>
             <div class="day-dialog-actions">
                 <button id="closeDayInfoDialog" type="button">Fechar</button>
+            </div>
+        </div>
+    </div>
+    <div id="periodManagementDialog" class="day-dialog-backdrop" role="dialog" aria-modal="true" aria-labelledby="periodManagementTitle" style="display: none;">
+        <div class="day-dialog" style="max-width: 500px;">
+            <h3 id="periodManagementTitle">Gerenciar Períodos</h3>
+            <div class="period-form">
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: bold;">Novo Período</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                        <div>
+                            <label style="display: block; font-size: 0.9em; margin-bottom: 3px;">Data Início</label>
+                            <input type="date" id="periodStartDate" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 0.9em; margin-bottom: 3px;">Data Fim</label>
+                            <input type="date" id="periodEndDate" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 0.9em; margin-bottom: 3px;">Meta de Dias Presenciais</label>
+                        <input type="number" id="periodGoal" min="1" value="10" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    </div>
+                </div>
+                <div class="day-dialog-actions">
+                    <button type="button" onclick="savePeriod()">Salvar Período</button>
+                    <button type="button" onclick="closePeriodManagement()">Cancelar</button>
+                </div>
+            </div>
+            <div class="periods-list" style="margin-top: 20px;">
+                <h4 style="margin-bottom: 10px;">Períodos Cadastrados</h4>
+                <div id="periodsList" style="font-size: 0.9em;">
+                    <!-- Periods will be listed here -->
+                </div>
+            </div>
+            <div class="period-progress" style="margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 6px;">
+                <h4 style="margin-bottom: 10px;">Progresso do Período Atual</h4>
+                <div id="currentPeriodProgress">
+                    <!-- Progress will be shown here -->
+                </div>
             </div>
         </div>
     </div>
