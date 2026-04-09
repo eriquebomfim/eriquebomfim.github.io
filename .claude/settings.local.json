@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(grep -r \"Lotado\\\\|temperature\\\\|opacity\" --include=*.js --include=*.css --include=*.html --include=*.json .)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ]
   }
 }
