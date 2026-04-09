@@ -205,7 +205,7 @@
         .calendar-day .day-number {
             font-weight: 700;
         }
-        .calendar-day.is-lotado .day-number {
+        .calendar-day.is-dark .day-number {
             color: #fff;
         }
         .calendar-day .day-head {
@@ -227,7 +227,7 @@
             flex-shrink: 0;
             position: absolute;
             top: -2px;
-            right: -7px;
+            right: -7vw;
             z-index: 1;
         }
         .calendar-day .day-meta {
@@ -236,7 +236,7 @@
             color: #1f2937;
             margin-top: auto;
         }
-        .calendar-day.is-lotado .day-meta {
+        .calendar-day.is-dark .day-meta {
             color: #fff;
         }
         }
@@ -579,7 +579,7 @@
     };
 
     const getWorkdayOccupancyLabel = (ratio) => {
-        if (ratio >= 0.81) {
+        if (ratio >= 0.86) {
             return 'Lotado';
         }
         if (ratio >= 0.61) {
@@ -778,8 +778,8 @@
                     if (occupancyLabel) {
                         meta = `${meta} · ${occupancyLabel}`;
                         // Add class for dark/lotado days
-                        if (occupancyLabel === 'Lotado') {
-                            klass += ' is-lotado';
+                        if (occupancyLabel === 'Crítico' || occupancyLabel === 'Lotado') {
+                            klass += ' is-dark';
                         }
                     }
                 }
