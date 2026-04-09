@@ -207,9 +207,9 @@
         }
         .calendar-day .day-head {
             display: flex;
-            justify-content: space-between;
             align-items: flex-start;
             gap: 4px;
+            position: relative;
         }
         .calendar-day .day-load {
             font-size: 0.56rem;
@@ -222,6 +222,10 @@
             background: rgba(255, 255, 255, 0.55);
             white-space: nowrap;
             flex-shrink: 0;
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            z-index: 1;
         }
         .calendar-day .day-meta {
             font-size: 0.64rem;
