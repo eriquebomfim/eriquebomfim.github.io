@@ -531,7 +531,8 @@
         return day === 0 || day === 6;
     };
 
-    const getWorkdayOccupancyTone = (deskStats) => {
+    const getWorkdayOccupancyTone = (dateInfo) => {
+        const deskStats = dateInfo?.deskStats;
         const total = deskStats?.total || 0;
         const occupied = deskStats?.occupied || 0;
         if (!total) {
@@ -540,23 +541,28 @@
 
         const ratio = Math.max(0, Math.min(1, occupied / total));
 
-        let overlayOpacity;
-        if (ratio <= 0.25) {
-            // 0-25%: baby, soft, clear (very light)
-            overlayOpacity = (0.1 + (ratio / 0.25) * 0.1).toFixed(3); // 0.1 to 0.2
-        } else if (ratio <= 0.5) {
-            // 25-50%: moderado (moderate)
-            overlayOpacity = (0.2 + ((ratio - 0.25) / 0.25) * 0.2).toFixed(3); // 0.2 to 0.4
-        } else if (ratio <= 0.85) {
-            // 51-85%: critico (dark)
-            overlayOpacity = (0.4 + ((ratio - 0.5) / 0.35) * 0.3).toFixed(3); // 0.4 to 0.7
+        // Determine day type based on dateInfo
+        let baseColor;
+        if (dateInfo.mySeat) {
+            // Yellow day: user has reservation
+            baseColor = '#b45309'; // Dark orange
+        } else if (dateInfo.freeSeats.length) {
+            // Green day: has free seats
+            baseColor = '#217a3a'; // Dark green
         } else {
-            // 86-100%: full (very dark)
-            overlayOpacity = (0.7 + ((ratio - 0.85) / 0.15) * 0.15).toFixed(3); // 0.7 to 0.85
+            // Red day: no vacancies
+            baseColor = '#dc2626'; // Dark red
         }
 
+        // For holidays (would need to check dateInfo.holiday or similar)
+        // baseColor = '#7c3aed'; // Dark purple
+
+        // Calculate opacity: 0.1 (0% occupancy) to 1.0 (100% occupancy)
+        // Using a simple linear mapping for now
+        const overlayOpacity = (0.1 + ratio * 0.9).toFixed(3); // 0.1 to 1.0
+
         return {
-            overlayColor: '#000000',
+            overlayColor: baseColor,
             overlayOpacity: overlayOpacity
         };
     };
@@ -738,7 +744,7 @@
 
                 if (!disabledByRule && dateInfo) {
                     if (dateInfo.deskStats.total > 0) {
-                        const tone = getWorkdayOccupancyTone(dateInfo.deskStats);
+                        const tone = getWorkdayOccupancyTone(dateInfo);
                         const occupancyRatio = dateInfo.deskStats.occupied / dateInfo.deskStats.total;
                         occupancyLabel = getWorkdayOccupancyLabel(occupancyRatio);
                         if (tone) {
