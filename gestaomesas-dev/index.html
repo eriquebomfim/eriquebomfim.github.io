@@ -539,35 +539,36 @@
         }
 
         const ratio = Math.max(0, Math.min(1, occupied / total));
-        const lerp = (a, b, t) => a + ((b - a) * t);
 
-        let normalized;
-        if (ratio <= 0.5) {
-            normalized = (ratio / 0.5) * 0.5;
-        } else if (ratio <= 0.7) {
-            normalized = 0.5 + (((ratio - 0.5) / 0.2) * 0.25);
-        } else if (ratio <= 0.9) {
-            normalized = 0.75 + (((ratio - 0.7) / 0.2) * 0.2);
+        let overlayOpacity;
+        if (ratio <= 0.25) {
+            // 0-25%: baby, soft, clear (very light)
+            overlayOpacity = (0.1 + (ratio / 0.25) * 0.1).toFixed(3); // 0.1 to 0.2
+        } else if (ratio <= 0.5) {
+            // 25-50%: moderado (moderate)
+            overlayOpacity = (0.2 + ((ratio - 0.25) / 0.25) * 0.2).toFixed(3); // 0.2 to 0.4
+        } else if (ratio <= 0.85) {
+            // 51-85%: critico (dark)
+            overlayOpacity = (0.4 + ((ratio - 0.5) / 0.35) * 0.3).toFixed(3); // 0.4 to 0.7
         } else {
-            normalized = 0.95 + (((ratio - 0.9) / 0.1) * 0.05);
+            // 86-100%: full (very dark)
+            overlayOpacity = (0.7 + ((ratio - 0.85) / 0.15) * 0.15).toFixed(3); // 0.7 to 0.85
         }
 
-        const tempOpacity = lerp(0, 0.678, normalized).toFixed(3);
-
         return {
-            overlayColor: 'hsl(35 88% 52%)',
-            overlayOpacity: tempOpacity
+            overlayColor: '#000000',
+            overlayOpacity: overlayOpacity
         };
     };
 
     const getWorkdayOccupancyLabel = (ratio) => {
-        if (ratio >= 0.9) {
+        if (ratio >= 0.86) {
             return 'Lotado';
         }
-        if (ratio >= 0.7) {
+        if (ratio >= 0.51) {
             return 'Crítico';
         }
-        if (ratio >= 0.5) {
+        if (ratio >= 0.25) {
             return 'Moderado';
         }
         return 'Tranquilo';
