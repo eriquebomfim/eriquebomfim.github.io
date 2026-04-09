@@ -204,6 +204,10 @@
         }
         .calendar-day .day-number {
             font-weight: 700;
+            /* Fallback for browsers without color-mix support */
+            color: #1f2937;
+            /* Base dark color, blends to light as opacity increases */
+            color: color-mix(in srgb, #1f2937 calc(100% - var(--temperature-opacity, 0) * 100%), #cccccc calc(var(--temperature-opacity, 0) * 100%));
         }
         .calendar-day .day-head {
             display: flex;
@@ -223,14 +227,17 @@
             white-space: nowrap;
             flex-shrink: 0;
             position: absolute;
-            top: 4px;
-            right: 4px;
+            top: -2px;
+            right: -7px;
             z-index: 1;
         }
         .calendar-day .day-meta {
             font-size: 0.64rem;
             line-height: 1.2;
+            /* Fallback for browsers without color-mix support */
             color: #1f2937;
+            /* Base dark color, blends to light as opacity increases */
+            color: color-mix(in srgb, #1f2937 calc(100% - var(--temperature-opacity, 0) * 100%), #cccccc calc(var(--temperature-opacity, 0) * 100%));
             margin-top: auto;
         }
         .calendar-day.is-pressing {
