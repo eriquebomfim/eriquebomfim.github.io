@@ -25,6 +25,10 @@
             background-color: var(--fundo);
             color: var(--texto);
             margin: 0;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
         #app {
             max-width: 980px;
@@ -87,7 +91,7 @@
             background-color: #e0e7ff;
             color: #aaa;
             cursor: not-allowed;
-            opacity: 0.7;
+            opacity: 0.678;
             pointer-events: none;
         }
         td.ocupante.livre {
@@ -205,11 +209,14 @@
         .calendar-day .day-number {
             font-weight: 700;
         }
+        .calendar-day.is-dark .day-number {
+            color: #fff;
+        }
         .calendar-day .day-head {
             display: flex;
-            justify-content: space-between;
             align-items: flex-start;
             gap: 4px;
+            position: relative;
         }
         .calendar-day .day-load {
             font-size: 0.56rem;
@@ -222,12 +229,20 @@
             background: rgba(255, 255, 255, 0.55);
             white-space: nowrap;
             flex-shrink: 0;
+            position: absolute;
+            top: -2px;
+            right: -7vw;
+            z-index: 1;
         }
-           .calendar-day .day-meta {
-            font-size: 0.54rem;
+        .calendar-day .day-meta {
+            font-size: 0.64rem;
             line-height: 1.2;
             color: #1f2937;
             margin-top: auto;
+        }
+        .calendar-day.is-dark .day-meta {
+            color: #fff;
+        }
         }
         .calendar-day.is-pressing {
             outline: 2px solid #2563eb;
@@ -254,10 +269,10 @@
             cursor: not-allowed;
         }
         .calendar-day.is-holiday {
-            background-color: #f1e9f8;
-            color: #5533aa;
+            background-color: #f8e9ee;
+            color: #6b1028;
             cursor: not-allowed;
-            border-color: #a38ec9;
+            border-color: #c98ea0;
         }
         .calendar-legend {
             display: flex;
@@ -408,7 +423,9 @@
                 width: 102vw;
                 padding-left: 0.3rem;
             }
-            .calendar-day {2rem;
+            .calendar-day {
+                min-height: 56px;
+                font-size: 0.72rem;
                 padding: 4px;
                 gap: 3px;
             }
@@ -417,9 +434,7 @@
                 padding: 1px 3px;
             }
             .calendar-day .day-meta {
-                font-size: 0.56
-            .calendar-day .day-meta {
-                font-size: 0.62rem;
+                font-size: 0.56rem;
             }
             footer {
                 gap: 8px;
@@ -531,7 +546,8 @@
         return day === 0 || day === 6;
     };
 
-    const getWorkdayOccupancyTone = (deskStats) => {
+    const getWorkdayOccupancyTone = (dateInfo) => {
+        const deskStats = dateInfo?.deskStats;
         const total = deskStats?.total || 0;
         const occupied = deskStats?.occupied || 0;
         if (!total) {
@@ -539,35 +555,41 @@
         }
 
         const ratio = Math.max(0, Math.min(1, occupied / total));
-        const lerp = (a, b, t) => a + ((b - a) * t);
 
-        let normalized;
-        if (ratio <= 0.5) {
-            normalized = (ratio / 0.5) * 0.5;
-        } else if (ratio <= 0.7) {
-            normalized = 0.5 + (((ratio - 0.5) / 0.2) * 0.25);
-        } else if (ratio <= 0.9) {
-            normalized = 0.75 + (((ratio - 0.7) / 0.2) * 0.2);
+        // Determine day type based on dateInfo
+        let baseColor;
+        if (dateInfo.mySeat) {
+            // Yellow day: user has reservation
+            baseColor = '#b45309'; // Dark orange
+        } else if (dateInfo.freeSeats.length) {
+            // Green day: has free seats
+            baseColor = '#217a3a'; // Dark green
         } else {
-            normalized = 0.95 + (((ratio - 0.9) / 0.1) * 0.05);
+            // Red day: no vacancies
+            baseColor = '#dc2626'; // Dark red
         }
 
-        const tempOpacity = lerp(0, 0.24, normalized).toFixed(3);
+        // For holidays (would need to check dateInfo.holiday or similar)
+        // baseColor = '#7c3aed'; // Dark purple
+
+        // Calculate opacity: 0.1 (0% occupancy) to 1.0 (100% occupancy)
+        // Using a simple linear mapping for now
+        const overlayOpacity = (0.1 + ratio * 0.9).toFixed(3); // 0.1 to 1.0
 
         return {
-            overlayColor: 'hsl(35 88% 52%)',
-            overlayOpacity: tempOpacity
+            overlayColor: baseColor,
+            overlayOpacity: overlayOpacity
         };
     };
 
     const getWorkdayOccupancyLabel = (ratio) => {
-        if (ratio >= 0.9) {
+        if (ratio >= 0.86) {
             return 'Lotado';
         }
-        if (ratio >= 0.7) {
+        if (ratio >= 0.61) {
             return 'Crítico';
         }
-        if (ratio >= 0.5) {
+        if (ratio >= 0.31) {
             return 'Moderado';
         }
         return 'Tranquilo';
@@ -737,7 +759,7 @@
 
                 if (!disabledByRule && dateInfo) {
                     if (dateInfo.deskStats.total > 0) {
-                        const tone = getWorkdayOccupancyTone(dateInfo.deskStats);
+                        const tone = getWorkdayOccupancyTone(dateInfo);
                         const occupancyRatio = dateInfo.deskStats.occupied / dateInfo.deskStats.total;
                         occupancyLabel = getWorkdayOccupancyLabel(occupancyRatio);
                         if (tone) {
@@ -759,6 +781,10 @@
                     }
                     if (occupancyLabel) {
                         meta = `${meta} · ${occupancyLabel}`;
+                        // Add class for dark days (Crítico and Lotado)
+                        if (occupancyLabel === 'Crítico' || occupancyLabel === 'Lotado') {
+                            klass += ' is-dark';
+                        }
                     }
                 }
 
