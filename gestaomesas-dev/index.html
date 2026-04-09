@@ -204,10 +204,9 @@
         }
         .calendar-day .day-number {
             font-weight: 700;
-            /* Fallback for browsers without color-mix support */
-            color: #1f2937;
-            /* Base dark color, blends to light as opacity increases */
-            color: color-mix(in srgb, #1f2937 calc(100% - var(--temperature-opacity, 0) * 100%), #cccccc calc(var(--temperature-opacity, 0) * 100%));
+        }
+        .calendar-day.is-lotado .day-number {
+            color: #fff;
         }
         .calendar-day .day-head {
             display: flex;
@@ -234,11 +233,12 @@
         .calendar-day .day-meta {
             font-size: 0.64rem;
             line-height: 1.2;
-            /* Fallback for browsers without color-mix support */
             color: #1f2937;
-            /* Base dark color, blends to light as opacity increases */
-            color: color-mix(in srgb, #1f2937 calc(100% - var(--temperature-opacity, 0) * 100%), #cccccc calc(var(--temperature-opacity, 0) * 100%));
             margin-top: auto;
+        }
+        .calendar-day.is-lotado .day-meta {
+            color: #fff;
+        }
         }
         .calendar-day.is-pressing {
             outline: 2px solid #2563eb;
@@ -579,13 +579,13 @@
     };
 
     const getWorkdayOccupancyLabel = (ratio) => {
-        if (ratio >= 0.86) {
+        if (ratio >= 0.81) {
             return 'Lotado';
         }
-        if (ratio >= 0.51) {
+        if (ratio >= 0.61) {
             return 'Crítico';
         }
-        if (ratio >= 0.25) {
+        if (ratio >= 0.31) {
             return 'Moderado';
         }
         return 'Tranquilo';
@@ -777,6 +777,10 @@
                     }
                     if (occupancyLabel) {
                         meta = `${meta} · ${occupancyLabel}`;
+                        // Add class for dark/lotado days
+                        if (occupancyLabel === 'Lotado') {
+                            klass += ' is-lotado';
+                        }
                     }
                 }
 
