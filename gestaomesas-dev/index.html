@@ -458,13 +458,13 @@
             text-shadow: 0 1px 1px rgba(0,0,0,0.3);
         }
         .period-start {
-            top: -1px;
+            top: 2vh;
             left: -1px;
             background: #1e3a8a; /* Navy blue */
             border-bottom-right-radius: 3px;
         }
         .period-end {
-            bottom: -1px;
+            top: 2vh;
             right: -1px;
             background: #1e3a8a; /* Navy blue */
             border-top-left-radius: 3px;
@@ -1332,9 +1332,9 @@
         <div id="content"></div>
         <footer>
             <button id="viewModeToggle" onclick="toggleViewMode()">Visão: Calendário</button>
+            <button id="periodManagementButton" onclick="openPeriodManagement()">Períodos</button>
             <button class="classic-only" id="openCalendar" onclick="openCalendar()"><span class="calendar-icon" style="margin-right: 8px;">📅</span></button>
             <button class="classic-only" id="filterButton" onclick="filter()">⭐</button>
-            <button id="periodManagementButton" onclick="openPeriodManagement()">Períodos</button>
         </footer>
     </div>
     <div id="dayInfoDialog" class="day-dialog-backdrop" role="dialog" aria-modal="true" aria-labelledby="dayInfoTitle">
