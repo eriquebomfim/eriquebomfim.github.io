@@ -41,17 +41,83 @@
             min-height: calc(100vh - 60px);
         }
         #loadingOverlay {
-            display: block;
+            display: flex;
+            flex-direction: column;
             text-align: center;
             align-items: center;
+            justify-content: center;
             height: 100vh;
             width: 100vw;
-            background-color: #fff;
+            background: linear-gradient(to right, #17365d, #2563eb);
             font-size: 1em;
-            justify-content: center;
-            z-index: 999;
+            z-index: 9999;
             font-weight: 600;
             position: fixed;
+            top: 0;
+            left: 0;
+            color: white;
+            transition: opacity 0.3s ease-out;
+        }
+
+        .splash-title {
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.35);
+            font-size: 2.2em;
+            margin-bottom: 30px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .loading-spinner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #93c5fd;
+            border-right-color: #60a5fa;
+            border-bottom-color: #3b82f6;
+            border-left-color: #2563eb;
+            animation: spin 1.2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-messages {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1em;
+            margin-top: 20px;
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .loading-message {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .loading-message.active {
+            opacity: 1;
+            transform: translateY(0);
         }
         #content,
         #compactCalendarView {
@@ -443,6 +509,23 @@
                 padding: 8px 10px;
                 font-size: 0.88rem;
             }
+
+            /* Splash screen mobile adjustments */
+            .splash-title {
+                font-size: 1.8em;
+                margin-bottom: 25px;
+            }
+
+            .loading-spinner {
+                width: 50px;
+                height: 50px;
+                margin-bottom: 25px;
+            }
+
+            .loading-messages {
+                font-size: 0.9em;
+                min-height: 50px;
+            }
         }
 
         /* Period Indicators */
@@ -544,21 +627,82 @@
     };
 
     const loader = {
-        show: (msg = "", autoclose = false) => {
+        messageInterval: null,
+
+        startMessages() {
+            // Clear any existing interval first
+            this.stopMessages();
+
+            const messages = document.querySelectorAll('.loading-message');
+            if (!messages.length) {
+                console.warn('No loading messages found');
+                return;
+            }
+
+            // Reset all messages to inactive
+            messages.forEach(msg => msg.classList.remove('active'));
+
+            let currentIndex = 0;
+
+            // Show first message
+            messages[currentIndex].classList.add('active');
+
+            this.messageInterval = setInterval(() => {
+                // Hide current message
+                messages[currentIndex].classList.remove('active');
+
+                // Move to next message
+                currentIndex = (currentIndex + 1) % messages.length;
+
+                // Show next message
+                messages[currentIndex].classList.add('active');
+            }, 1500); // Change message every 1.5 seconds
+        },
+
+        stopMessages() {
+            if (this.messageInterval) {
+                clearInterval(this.messageInterval);
+                this.messageInterval = null;
+            }
+        },
+
+        showFinalMessage(message) {
+            const messagesContainer = document.getElementById('loadingMessages');
+            if (messagesContainer) {
+                messagesContainer.innerHTML = `<div class="loading-message active" style="color: #a5f3fc; font-weight: bold;">${message}</div>`;
+            }
+        },
+
+        show(msg = "", autoclose = false) {
             const loadingOverlay = document.querySelector('#loadingOverlay');
+
+            // Ensure loading overlay is visible
             loadingOverlay.style.display = 'flex';
-            loadingOverlay.innerHTML = msg || 'Por favor, aguarde...';
-            document.querySelector('#content').style.display = 'none';
-            document.querySelector('#compactCalendarView').style.display = 'none';
+            loadingOverlay.style.opacity = '1';
+
+            // Start cycling messages
+            this.startMessages();
+
             if (autoclose) {
                 setTimeout(() => {
-                    loader.hide();
+                    this.hide();
                 }, autoclose || 5000);
             }
         },
-        hide: () => {
+
+        hide() {
+            this.stopMessages();
+            this.showFinalMessage('✓ Aplicação carregada com sucesso!');
+
             const loadingOverlay = document.querySelector('#loadingOverlay');
-            loadingOverlay.style.display = 'none';
+            // Add fade out effect after a moment
+            setTimeout(() => {
+                loadingOverlay.style.opacity = '0';
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                    loadingOverlay.style.opacity = '1';
+                }, 300);
+            }, 1000);
         }
     };
 
@@ -1115,6 +1259,7 @@
     };
 
     const _fetch = (url, callback, _async = false) => {
+        console.log('Fetching:', url);
         if (!_async) {
             loader.show();
         } else {
@@ -1125,9 +1270,17 @@
         src.async = true;
         document.head.appendChild(src);
         src.onload = () => {
+            console.log('Script loaded');
             document.head.removeChild(src);
             if (typeof callback === 'function') {
                 callback(window.resp);
+            }
+        };
+        src.onerror = (error) => {
+            console.error('Script load error:', error);
+            document.head.removeChild(src);
+            if (typeof callback === 'function') {
+                callback(null);
             }
         };
     };
@@ -1138,16 +1291,36 @@
 
         initEvents();
         _fetch(`${baseurl}?action=view&k=${chave}`, (data) => {
+            console.log('Data received:', data ? 'yes' : 'no');
             if (data) {
                 if (/negado/i.test(data)) {
-                    document.querySelector('#loadingOverlay').innerHTML = data;
+                    console.log('Access denied');
+                    const loadingOverlay = document.querySelector('#loadingOverlay');
+                    loadingOverlay.innerHTML = `
+                        <div style="text-align: center; max-width: 300px;">
+                            <div style="width: 60px; height: 60px; margin: 0 auto 20px; border-radius: 50%; background: rgba(255, 255, 255, 0.2); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">
+                                ⚠️
+                            </div>
+                            <h2 style="color: white; margin-bottom: 10px; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.35);">Acesso Negado</h2>
+                            <p style="color: rgba(255, 255, 255, 0.9); margin-bottom: 20px;">${data}</p>
+                            <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.9em;">Verifique sua chave de acesso e tente novamente.</p>
+                        </div>
+                    `;
                     return;
                 }
+                console.log('Setting content and hiding loader');
                 content.innerHTML = data;
                 loader.hide();
                 init();
             } else {
+                console.log('No data received');
                 content.innerHTML = '<p>Erro ao carregar os dados.</p>';
+                // Try to hide loader even if no data
+                try {
+                    loader.hide();
+                } catch (e) {
+                    console.error('Error hiding loader:', e);
+                }
             }
         });
     });
@@ -1325,7 +1498,17 @@
 </script>
 </head>
 <body>
-    <div id="loadingOverlay">Por favor, aguarde...</div>
+    <div id="loadingOverlay">
+        <h1 class="splash-title">eMesas</h1>
+        <div class="loading-spinner"></div>
+        <div class="loading-messages" id="loadingMessages">
+            <div class="loading-message active">Carregando dados das mesas...</div>
+            <div class="loading-message">Verificando disponibilidade...</div>
+            <div class="loading-message">Sincronizando com a planilha...</div>
+            <div class="loading-message">Preparando interface...</div>
+            <div class="loading-message">Quase pronto...</div>
+        </div>
+    </div>
     <h1>eMesas</h1>
     <div id="app">
         <div id="compactCalendarView"></div>
