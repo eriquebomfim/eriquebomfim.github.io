@@ -48,7 +48,7 @@
             justify-content: center;
             height: 100vh;
             width: 100vw;
-            background: linear-gradient(135deg, #f4f4f4 0%, #ffffff 100%);
+            background: #ffffff;
             font-size: 1em;
             z-index: 9999;
             font-weight: 600;
@@ -58,41 +58,9 @@
             transition: opacity 0.3s ease-out;
         }
 
-        .splash-logo {
-            width: 120px;
-            height: 120px;
-            margin-bottom: 30px;
-            border-radius: 24px;
-            background: linear-gradient(135deg, #6a68eb 0%, #1e3a8a 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 32px rgba(106, 104, 235, 0.25);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .splash-logo::before {
-            content: '';
-            position: absolute;
-            width: 80px;
-            height: 80px;
-            background: white;
-            border-radius: 16px;
-            transform: rotate(45deg);
-        }
-
-        .splash-logo::after {
-            content: '📅';
-            position: absolute;
-            font-size: 36px;
-            z-index: 1;
-        }
-
         .loading-spinner {
             width: 60px;
             height: 60px;
-            margin-bottom: 20px;
             position: relative;
         }
 
@@ -112,48 +80,6 @@
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
-        }
-
-        .splash-title {
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, #1e3a8a 0%, #6a68eb 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: 0.5px;
-        }
-
-        .splash-subtitle {
-            font-size: 1rem;
-            color: #64748b;
-            margin-bottom: 30px;
-            max-width: 300px;
-            line-height: 1.5;
-        }
-
-        .loading-progress {
-            width: 200px;
-            height: 4px;
-            background: rgba(106, 104, 235, 0.1);
-            border-radius: 2px;
-            overflow: hidden;
-            margin-top: 10px;
-        }
-
-        .loading-progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #6a68eb 0%, #1e3a8a 100%);
-            border-radius: 2px;
-            width: 0%;
-            animation: progress 2s ease-in-out infinite;
-        }
-
-        @keyframes progress {
-            0% { width: 0%; transform: translateX(-100%); }
-            50% { width: 100%; transform: translateX(0%); }
-            100% { width: 0%; transform: translateX(100%); }
         }
         #content,
         #compactCalendarView {
@@ -546,42 +472,10 @@
                 font-size: 0.88rem;
             }
 
-            /* Splash screen mobile adjustments */
-            .splash-logo {
-                width: 90px;
-                height: 90px;
-                margin-bottom: 20px;
-                border-radius: 18px;
-            }
-
-            .splash-logo::before {
-                width: 60px;
-                height: 60px;
-                border-radius: 12px;
-            }
-
-            .splash-logo::after {
-                font-size: 28px;
-            }
-
-            .splash-title {
-                font-size: 1.8rem;
-            }
-
-            .splash-subtitle {
-                font-size: 0.9rem;
-                max-width: 250px;
-                padding: 0 15px;
-            }
-
+            /* Loading spinner mobile adjustments */
             .loading-spinner {
                 width: 50px;
                 height: 50px;
-                margin-bottom: 15px;
-            }
-
-            .loading-progress {
-                width: 180px;
             }
         }
 
@@ -687,15 +581,6 @@
         show: (msg = "", autoclose = false) => {
             const loadingOverlay = document.querySelector('#loadingOverlay');
             loadingOverlay.style.display = 'flex';
-
-            // Update subtitle if message provided
-            if (msg) {
-                const subtitle = loadingOverlay.querySelector('.splash-subtitle');
-                if (subtitle) {
-                    subtitle.textContent = msg;
-                }
-            }
-
             document.querySelector('#content').style.display = 'none';
             document.querySelector('#compactCalendarView').style.display = 'none';
             if (autoclose) {
@@ -706,27 +591,12 @@
         },
         hide: () => {
             const loadingOverlay = document.querySelector('#loadingOverlay');
-
-            // Show "completed" message briefly
-            const subtitle = loadingOverlay.querySelector('.splash-subtitle');
-            if (subtitle) {
-                subtitle.textContent = 'Carregamento concluído!';
-                subtitle.style.color = '#10b981';
-            }
-
-            // Add fade out effect after brief delay
+            // Add fade out effect
+            loadingOverlay.style.opacity = '0';
             setTimeout(() => {
-                loadingOverlay.style.opacity = '0';
-                setTimeout(() => {
-                    loadingOverlay.style.display = 'none';
-                    loadingOverlay.style.opacity = '1';
-                    // Reset subtitle
-                    if (subtitle) {
-                        subtitle.textContent = 'Sistema de Gestão de Mesas da CDS/MPBA';
-                        subtitle.style.color = '';
-                    }
-                }, 300);
-            }, 500);
+                loadingOverlay.style.display = 'none';
+                loadingOverlay.style.opacity = '1';
+            }, 300);
         }
     };
 
@@ -1310,11 +1180,13 @@
                 if (/negado/i.test(data)) {
                     const loadingOverlay = document.querySelector('#loadingOverlay');
                     loadingOverlay.innerHTML = `
-                        <div class="splash-logo" style="background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%);"></div>
-                        <h1 class="splash-title" style="background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%);">Acesso Negado</h1>
-                        <p class="splash-subtitle">${data}</p>
-                        <div style="margin-top: 20px; padding: 12px 24px; background: #fee2e2; color: #991b1b; border-radius: 8px; border: 1px solid #fca5a5;">
-                            Verifique sua chave de acesso e tente novamente.
+                        <div style="text-align: center; max-width: 300px;">
+                            <div style="width: 60px; height: 60px; margin: 0 auto 20px; border-radius: 50%; background: #fee2e2; display: flex; align-items: center; justify-content: center; color: #dc2626; font-size: 24px;">
+                                ⚠️
+                            </div>
+                            <h2 style="color: #dc2626; margin-bottom: 10px;">Acesso Negado</h2>
+                            <p style="color: #666; margin-bottom: 20px;">${data}</p>
+                            <p style="color: #999; font-size: 0.9em;">Verifique sua chave de acesso e tente novamente.</p>
                         </div>
                     `;
                     return;
@@ -1502,13 +1374,7 @@
 </head>
 <body>
     <div id="loadingOverlay">
-        <div class="splash-logo"></div>
-        <h1 class="splash-title">eMesas</h1>
-        <p class="splash-subtitle">Sistema de Gestão de Mesas da CDS/MPBA</p>
         <div class="loading-spinner"></div>
-        <div class="loading-progress">
-            <div class="loading-progress-bar"></div>
-        </div>
     </div>
     <h1>eMesas</h1>
     <div id="app">
