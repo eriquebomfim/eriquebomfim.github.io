@@ -71,6 +71,7 @@
             width: 60px;
             height: 60px;
             position: relative;
+            margin-bottom: 30px;
         }
 
         .loading-spinner::before {
@@ -81,14 +82,41 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            border: 4px solid rgba(255, 255, 255, 0.2);
-            border-top-color: white;
-            animation: spin 1s linear infinite;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #93c5fd;
+            border-right-color: #60a5fa;
+            border-bottom-color: #3b82f6;
+            border-left-color: #2563eb;
+            animation: spin 1.2s linear infinite;
         }
 
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+
+        .loading-messages {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1em;
+            margin-top: 20px;
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .loading-message {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .loading-message.active {
+            opacity: 1;
+            transform: translateY(0);
         }
         #content,
         #compactCalendarView {
@@ -484,12 +512,18 @@
             /* Splash screen mobile adjustments */
             .splash-title {
                 font-size: 1.8em;
-                margin-bottom: 30px;
+                margin-bottom: 25px;
             }
 
             .loading-spinner {
                 width: 50px;
                 height: 50px;
+                margin-bottom: 25px;
+            }
+
+            .loading-messages {
+                font-size: 0.9em;
+                min-height: 50px;
             }
         }
 
@@ -592,25 +626,72 @@
     };
 
     const loader = {
+        messageInterval: null,
+
+        startMessages: () => {
+            const messages = document.querySelectorAll('.loading-message');
+            if (!messages.length) return;
+
+            let currentIndex = 0;
+
+            // Show first message
+            messages[currentIndex].classList.add('active');
+
+            this.messageInterval = setInterval(() => {
+                // Hide current message
+                messages[currentIndex].classList.remove('active');
+
+                // Move to next message
+                currentIndex = (currentIndex + 1) % messages.length;
+
+                // Show next message
+                messages[currentIndex].classList.add('active');
+            }, 1500); // Change message every 1.5 seconds
+        },
+
+        stopMessages: () => {
+            if (this.messageInterval) {
+                clearInterval(this.messageInterval);
+                this.messageInterval = null;
+            }
+        },
+
+        showFinalMessage: (message) => {
+            const messagesContainer = document.getElementById('loadingMessages');
+            if (messagesContainer) {
+                messagesContainer.innerHTML = `<div class="loading-message active" style="color: #a5f3fc; font-weight: bold;">${message}</div>`;
+            }
+        },
+
         show: (msg = "", autoclose = false) => {
             const loadingOverlay = document.querySelector('#loadingOverlay');
             loadingOverlay.style.display = 'flex';
             document.querySelector('#content').style.display = 'none';
             document.querySelector('#compactCalendarView').style.display = 'none';
+
+            // Start cycling messages
+            this.startMessages();
+
             if (autoclose) {
                 setTimeout(() => {
                     loader.hide();
                 }, autoclose || 5000);
             }
         },
+
         hide: () => {
+            this.stopMessages();
+            this.showFinalMessage('✓ Aplicação carregada com sucesso!');
+
             const loadingOverlay = document.querySelector('#loadingOverlay');
-            // Add fade out effect
-            loadingOverlay.style.opacity = '0';
+            // Add fade out effect after a moment
             setTimeout(() => {
-                loadingOverlay.style.display = 'none';
-                loadingOverlay.style.opacity = '1';
-            }, 300);
+                loadingOverlay.style.opacity = '0';
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                    loadingOverlay.style.opacity = '1';
+                }, 300);
+            }, 1000);
         }
     };
 
@@ -1390,6 +1471,13 @@
     <div id="loadingOverlay">
         <h1 class="splash-title">eMesas</h1>
         <div class="loading-spinner"></div>
+        <div class="loading-messages" id="loadingMessages">
+            <div class="loading-message active">Carregando dados das mesas...</div>
+            <div class="loading-message">Verificando disponibilidade...</div>
+            <div class="loading-message">Sincronizando com a planilha...</div>
+            <div class="loading-message">Preparando interface...</div>
+            <div class="loading-message">Quase pronto...</div>
+        </div>
     </div>
     <h1>eMesas</h1>
     <div id="app">
