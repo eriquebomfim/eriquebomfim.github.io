@@ -48,7 +48,7 @@
             justify-content: center;
             height: 100vh;
             width: 100vw;
-            background: #ffffff;
+            background: linear-gradient(to right, #17365d, #2563eb);
             font-size: 1em;
             z-index: 9999;
             font-weight: 600;
@@ -56,6 +56,15 @@
             top: 0;
             left: 0;
             transition: opacity 0.3s ease-out;
+        }
+
+        .splash-title {
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.35);
+            font-size: 2.2em;
+            margin-bottom: 40px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
         .loading-spinner {
@@ -72,8 +81,8 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            border: 4px solid rgba(106, 104, 235, 0.1);
-            border-top-color: #6a68eb;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            border-top-color: white;
             animation: spin 1s linear infinite;
         }
 
@@ -472,7 +481,12 @@
                 font-size: 0.88rem;
             }
 
-            /* Loading spinner mobile adjustments */
+            /* Splash screen mobile adjustments */
+            .splash-title {
+                font-size: 1.8em;
+                margin-bottom: 30px;
+            }
+
             .loading-spinner {
                 width: 50px;
                 height: 50px;
@@ -1181,12 +1195,12 @@
                     const loadingOverlay = document.querySelector('#loadingOverlay');
                     loadingOverlay.innerHTML = `
                         <div style="text-align: center; max-width: 300px;">
-                            <div style="width: 60px; height: 60px; margin: 0 auto 20px; border-radius: 50%; background: #fee2e2; display: flex; align-items: center; justify-content: center; color: #dc2626; font-size: 24px;">
+                            <div style="width: 60px; height: 60px; margin: 0 auto 20px; border-radius: 50%; background: rgba(255, 255, 255, 0.2); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">
                                 ⚠️
                             </div>
-                            <h2 style="color: #dc2626; margin-bottom: 10px;">Acesso Negado</h2>
-                            <p style="color: #666; margin-bottom: 20px;">${data}</p>
-                            <p style="color: #999; font-size: 0.9em;">Verifique sua chave de acesso e tente novamente.</p>
+                            <h2 style="color: white; margin-bottom: 10px; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.35);">Acesso Negado</h2>
+                            <p style="color: rgba(255, 255, 255, 0.9); margin-bottom: 20px;">${data}</p>
+                            <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.9em;">Verifique sua chave de acesso e tente novamente.</p>
                         </div>
                     `;
                     return;
@@ -1374,6 +1388,7 @@
 </head>
 <body>
     <div id="loadingOverlay">
+        <h1 class="splash-title">eMesas</h1>
         <div class="loading-spinner"></div>
     </div>
     <h1>eMesas</h1>
