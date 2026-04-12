@@ -56,6 +56,7 @@
             top: 0;
             left: 0;
             color: white;
+            transition: opacity 0.3s ease-out;
         }
 
         .splash-title {
@@ -628,9 +629,18 @@
     const loader = {
         messageInterval: null,
 
-        startMessages: () => {
+        startMessages() {
+            // Clear any existing interval first
+            this.stopMessages();
+
             const messages = document.querySelectorAll('.loading-message');
-            if (!messages.length) return;
+            if (!messages.length) {
+                console.warn('No loading messages found');
+                return;
+            }
+
+            // Reset all messages to inactive
+            messages.forEach(msg => msg.classList.remove('active'));
 
             let currentIndex = 0;
 
@@ -649,53 +659,38 @@
             }, 1500); // Change message every 1.5 seconds
         },
 
-        stopMessages: () => {
+        stopMessages() {
             if (this.messageInterval) {
                 clearInterval(this.messageInterval);
                 this.messageInterval = null;
             }
         },
 
-        showFinalMessage: (message) => {
+        showFinalMessage(message) {
             const messagesContainer = document.getElementById('loadingMessages');
             if (messagesContainer) {
                 messagesContainer.innerHTML = `<div class="loading-message active" style="color: #a5f3fc; font-weight: bold;">${message}</div>`;
             }
         },
 
-        show: (msg = "", autoclose = false) => {
+        show(msg = "", autoclose = false) {
             const loadingOverlay = document.querySelector('#loadingOverlay');
 
-            // Set up the loading overlay structure if not already set
-            if (!loadingOverlay.querySelector('.splash-title')) {
-                loadingOverlay.innerHTML = `
-                    <h1 class="splash-title">eMesas</h1>
-                    <div class="loading-spinner"></div>
-                    <div class="loading-messages" id="loadingMessages">
-                        <div class="loading-message active">Carregando dados das mesas...</div>
-                        <div class="loading-message">Verificando disponibilidade...</div>
-                        <div class="loading-message">Sincronizando com a planilha...</div>
-                        <div class="loading-message">Preparando interface...</div>
-                        <div class="loading-message">Quase pronto...</div>
-                    </div>
-                `;
-            }
-
+            // Ensure loading overlay is visible
             loadingOverlay.style.display = 'flex';
-            document.querySelector('#content').style.display = 'none';
-            document.querySelector('#compactCalendarView').style.display = 'none';
+            loadingOverlay.style.opacity = '1';
 
             // Start cycling messages
             this.startMessages();
 
             if (autoclose) {
                 setTimeout(() => {
-                    loader.hide();
+                    this.hide();
                 }, autoclose || 5000);
             }
         },
 
-        hide: () => {
+        hide() {
             this.stopMessages();
             this.showFinalMessage('✓ Aplicação carregada com sucesso!');
 
@@ -1264,6 +1259,7 @@
     };
 
     const _fetch = (url, callback, _async = false) => {
+        console.log('Fetching:', url);
         if (!_async) {
             loader.show();
         } else {
@@ -1274,9 +1270,17 @@
         src.async = true;
         document.head.appendChild(src);
         src.onload = () => {
+            console.log('Script loaded');
             document.head.removeChild(src);
             if (typeof callback === 'function') {
                 callback(window.resp);
+            }
+        };
+        src.onerror = (error) => {
+            console.error('Script load error:', error);
+            document.head.removeChild(src);
+            if (typeof callback === 'function') {
+                callback(null);
             }
         };
     };
@@ -1287,8 +1291,10 @@
 
         initEvents();
         _fetch(`${baseurl}?action=view&k=${chave}`, (data) => {
+            console.log('Data received:', data ? 'yes' : 'no');
             if (data) {
                 if (/negado/i.test(data)) {
+                    console.log('Access denied');
                     const loadingOverlay = document.querySelector('#loadingOverlay');
                     loadingOverlay.innerHTML = `
                         <div style="text-align: center; max-width: 300px;">
@@ -1302,11 +1308,19 @@
                     `;
                     return;
                 }
+                console.log('Setting content and hiding loader');
                 content.innerHTML = data;
                 loader.hide();
                 init();
             } else {
+                console.log('No data received');
                 content.innerHTML = '<p>Erro ao carregar os dados.</p>';
+                // Try to hide loader even if no data
+                try {
+                    loader.hide();
+                } catch (e) {
+                    console.error('Error hiding loader:', e);
+                }
             }
         });
     });
