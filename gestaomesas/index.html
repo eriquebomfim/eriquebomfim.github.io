@@ -627,61 +627,12 @@
     };
 
     const loader = {
-        messageInterval: null,
-
-        startMessages() {
-            // Clear any existing interval first
-            this.stopMessages();
-
-            const messages = document.querySelectorAll('.loading-message');
-            if (!messages.length) {
-                console.warn('No loading messages found');
-                return;
-            }
-
-            // Reset all messages to inactive
-            messages.forEach(msg => msg.classList.remove('active'));
-
-            let currentIndex = 0;
-
-            // Show first message
-            messages[currentIndex].classList.add('active');
-
-            this.messageInterval = setInterval(() => {
-                // Hide current message
-                messages[currentIndex].classList.remove('active');
-
-                // Move to next message
-                currentIndex = (currentIndex + 1) % messages.length;
-
-                // Show next message
-                messages[currentIndex].classList.add('active');
-            }, 1500); // Change message every 1.5 seconds
-        },
-
-        stopMessages() {
-            if (this.messageInterval) {
-                clearInterval(this.messageInterval);
-                this.messageInterval = null;
-            }
-        },
-
-        showFinalMessage(message) {
-            const messagesContainer = document.getElementById('loadingMessages');
-            if (messagesContainer) {
-                messagesContainer.innerHTML = `<div class="loading-message active" style="color: #a5f3fc; font-weight: bold;">${message}</div>`;
-            }
-        },
-
         show(msg = "", autoclose = false) {
             const loadingOverlay = document.querySelector('#loadingOverlay');
 
             // Ensure loading overlay is visible
             loadingOverlay.style.display = 'flex';
             loadingOverlay.style.opacity = '1';
-
-            // Start cycling messages
-            this.startMessages();
 
             if (autoclose) {
                 setTimeout(() => {
@@ -691,18 +642,21 @@
         },
 
         hide() {
-            this.stopMessages();
-            this.showFinalMessage('✓ Aplicação carregada com sucesso!');
-
+            console.log('loader.hide() called');
             const loadingOverlay = document.querySelector('#loadingOverlay');
-            // Add fade out effect after a moment
+            if (!loadingOverlay) {
+                console.error('Loading overlay not found!');
+                return;
+            }
+
+            // Fade out immediately (no final message, no delay)
+            loadingOverlay.style.opacity = '0';
+            console.log('Loader fading out...');
             setTimeout(() => {
-                loadingOverlay.style.opacity = '0';
-                setTimeout(() => {
-                    loadingOverlay.style.display = 'none';
-                    loadingOverlay.style.opacity = '1';
-                }, 300);
-            }, 1000);
+                loadingOverlay.style.display = 'none';
+                loadingOverlay.style.opacity = '1';
+                console.log('Loader hidden');
+            }, 300);
         }
     };
 
@@ -1270,7 +1224,7 @@
         src.async = true;
         document.head.appendChild(src);
         src.onload = () => {
-            console.log('Script loaded');
+            console.log('Script loaded, resp exists?', typeof window.resp !== 'undefined');
             document.head.removeChild(src);
             if (typeof callback === 'function') {
                 callback(window.resp);
@@ -1294,7 +1248,9 @@
             console.log('Data received:', data ? 'yes' : 'no');
             if (data) {
                 if (/negado/i.test(data)) {
-                    console.log('Access denied');
+                    console.log('Access denied - showing error message');
+
+                    // Show error message in the loading overlay
                     const loadingOverlay = document.querySelector('#loadingOverlay');
                     loadingOverlay.innerHTML = `
                         <div style="text-align: center; max-width: 300px;">
@@ -1306,6 +1262,8 @@
                             <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.9em;">Verifique sua chave de acesso e tente novamente.</p>
                         </div>
                     `;
+                    // Keep the overlay visible to show the error message
+                    // This is intentional - not "stuck", but showing an error
                     return;
                 }
                 console.log('Setting content and hiding loader');
@@ -1499,14 +1457,10 @@
 </head>
 <body>
     <div id="loadingOverlay">
-        <h1 class="splash-title">eMesas</h1>
+        <div class="splash-title">eMesas</div>
         <div class="loading-spinner"></div>
         <div class="loading-messages" id="loadingMessages">
             <div class="loading-message active">Carregando dados das mesas...</div>
-            <div class="loading-message">Verificando disponibilidade...</div>
-            <div class="loading-message">Sincronizando com a planilha...</div>
-            <div class="loading-message">Preparando interface...</div>
-            <div class="loading-message">Quase pronto...</div>
         </div>
     </div>
     <h1>eMesas</h1>
