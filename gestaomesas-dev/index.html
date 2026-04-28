@@ -585,7 +585,6 @@
     var calendarFlatpickr;
     const baseurl = "https://script.google.com/macros/s/AKfycbxaT7ZnJM9OM1lWmI4TrW2cxo6w4Cv4PxMzdobm0YjVcBb_6EqgiHKn2jLq50OnEL0S/exec";
     const isMobile = (/Mobi|Android/i.test(navigator.userAgent));
-    const VIEW_MODE_KEY = 'emesas_view_mode';
     const VIEW_MODES = {
         CALENDAR: 'calendar',
         CLASSIC: 'classic'
@@ -600,10 +599,9 @@
         longPressTimer: null,
         longPressTriggered: false,
         longPressTarget: null,
-        periods: [] // Array to store periods {id, startDate, endDate, goal}
+        periods: [],
+        config: { viewMode: VIEW_MODES.CALENDAR, periods: [] }
     };
-
-    const PERIODS_STORAGE_KEY = 'emesas_periods';
 
     const openCalendar = () => {
         if (document.body.classList.contains('calendar-mode')) {
@@ -728,9 +726,15 @@
         return 'Tranquilo';
     };
 
+    const saveConfig = () => {
+        const encoded = encodeURIComponent(JSON.stringify(state.config));
+        _fetch(`${baseurl}?action=setconfig&k=${chave}&config=${encoded}`, null);
+    };
+
     const setViewMode = (mode) => {
         const finalMode = mode === VIEW_MODES.CLASSIC ? VIEW_MODES.CLASSIC : VIEW_MODES.CALENDAR;
-        localStorage.setItem(VIEW_MODE_KEY, finalMode);
+        state.config.viewMode = finalMode;
+        saveConfig();
         document.body.classList.toggle('calendar-mode', finalMode === VIEW_MODES.CALENDAR);
         document.body.classList.toggle('classic-mode', finalMode === VIEW_MODES.CLASSIC);
 
@@ -751,7 +755,7 @@
     };
 
     const toggleViewMode = () => {
-        const current = localStorage.getItem(VIEW_MODE_KEY) || VIEW_MODES.CALENDAR;
+        const current = state.config.viewMode || VIEW_MODES.CALENDAR;
         setViewMode(current === VIEW_MODES.CALENDAR ? VIEW_MODES.CLASSIC : VIEW_MODES.CALENDAR);
     };
 
@@ -1208,17 +1212,19 @@
         initClassicDatePicker();
         parseBackendData();
         renderCompactCalendar();
-
-        const savedMode = localStorage.getItem(VIEW_MODE_KEY) || VIEW_MODES.CALENDAR;
-        setViewMode(savedMode);
+        setViewMode(state.config.viewMode || VIEW_MODES.CALENDAR);
+        loadPeriods();
     };
 
     const _fetch = (url, callback, _async = false) => {
         console.log('Fetching:', url);
-        if (!_async) {
-            loader.show();
-        } else {
-            toast('Processando...', 500000);
+        const silent = callback === null;
+        if (!silent) {
+            if (!_async) {
+                loader.show();
+            } else {
+                toast('Processando...', 500000);
+            }
         }
         const src = document.createElement('script');
         src.src = url;
@@ -1269,8 +1275,16 @@
                 }
                 console.log('Setting content and hiding loader');
                 content.innerHTML = data;
-                loader.hide();
-                init();
+                _fetch(`${baseurl}?action=getconfig&k=${chave}`, (configData) => {
+                    try {
+                        const parsed = JSON.parse(configData || '{}');
+                        state.config = Object.assign({ viewMode: VIEW_MODES.CALENDAR, periods: [] }, parsed);
+                    } catch (e) {
+                        console.error('Error parsing config:', e);
+                    }
+                    loader.hide();
+                    init();
+                });
             } else {
                 console.log('No data received');
                 content.innerHTML = '<p>Erro ao carregar os dados.</p>';
@@ -1286,20 +1300,15 @@
 
     // Period Management Functions
     const loadPeriods = () => {
-        try {
-            const saved = localStorage.getItem(PERIODS_STORAGE_KEY);
-            state.periods = saved ? JSON.parse(saved) : [];
-            updatePeriodsList();
-            updateCurrentPeriodProgress();
-        } catch (e) {
-            console.error('Error loading periods:', e);
-            state.periods = [];
-        }
+        state.periods = state.config.periods || [];
+        updatePeriodsList();
+        updateCurrentPeriodProgress();
     };
 
     const savePeriods = () => {
         try {
-            localStorage.setItem(PERIODS_STORAGE_KEY, JSON.stringify(state.periods));
+            state.config.periods = state.periods;
+            saveConfig();
             updatePeriodsList();
             updateCurrentPeriodProgress();
             // Refresh calendar to show period indicators
@@ -1452,8 +1461,7 @@
         `;
     };
 
-    // Initialize periods on load
-    setTimeout(loadPeriods, 1000);
+
 </script>
 </head>
 <body>
