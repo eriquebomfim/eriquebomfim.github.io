@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>Test Script Loading</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        #log {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        button {
+            padding: 10px 20px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Google Apps Script Loading</h1>
+    <p>Testing if the script at the base URL loads correctly.</p>
+
+    <button onclick="testScriptLoad()">Test Script Load</button>
+    <button onclick="testWithMockKey()">Test With Mock Key</button>
+    <button onclick="testWithoutKey()">Test Without Key</button>
+
+    <div id="result" style="margin-top: 20px; padding: 15px; background: white; border-radius: 8px;"></div>
+    <div id="log"></div>
+
+    <script>
+        const log = (msg) => {
+            const logDiv = document.getElementById('log');
+            logDiv.innerHTML += `[${new Date().toLocaleTimeString()}] ${msg}<br>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(msg);
+        };
+
+        const baseurl = "https://script.google.com/macros/s/AKfycbxaT7ZnJM9OM1lWmI4TrW2cxo6w4Cv4PxMzdobm0YjVcBb_6EqgiHKn2jLq50OnEL0S/exec";
+
+        function testScriptLoad() {
+            log('=== Testing script load ===');
+            const url = `${baseurl}?action=view&k=test`;
+            log(`Loading: ${url}`);
+
+            const script = document.createElement('script');
+            script.src = url;
+            script.async = true;
+
+            script.onload = () => {
+                log('Script loaded successfully');
+                log(`window.resp type: ${typeof window.resp}`);
+                log(`window.resp value: ${window.resp ? 'exists' : 'null/undefined'}`);
+                if (window.resp) {
+                    log(`First 100 chars: ${window.resp.substring(0, 100)}...`);
+                    document.getElementById('result').innerHTML =
+                        `<h3>Script Loaded</h3>
+                         <p>Response length: ${window.resp.length} characters</p>
+                         <p>Contains "negado": ${/negado/i.test(window.resp) ? 'YES' : 'no'}</p>
+                         <textarea style="width:100%; height:100px; margin-top:10px;">${window.resp.substring(0, 500)}...</textarea>`;
+                } else {
+                    document.getElementById('result').innerHTML =
+                        '<h3>Script Loaded but no response</h3><p>window.resp is not set</p>';
+                }
+                document.head.removeChild(script);
+            };
+
+            script.onerror = (error) => {
+                log(`Script load error: ${error}`);
+                document.getElementById('result').innerHTML =
+                    `<h3>Script Load Failed</h3><p>Check console for errors</p>`;
+                document.head.removeChild(script);
+            };
+
+            document.head.appendChild(script);
+        }
+
+        function testWithMockKey() {
+            log('=== Testing with mock key from URL ===');
+            // Simulate having a key in URL
+            const mockUrl = new URL(window.location.href);
+            mockUrl.searchParams.set('k', 'test-key-123');
+            history.replaceState({}, '', mockUrl);
+
+            const chave = new URLSearchParams(window.location.search).get('k') || '';
+            log(`Key from URL: "${chave}"`);
+
+            testScriptLoad();
+        }
+
+        function testWithoutKey() {
+            log('=== Testing without key ===');
+            // Remove key from URL
+            const mockUrl = new URL(window.location.href);
+            mockUrl.searchParams.delete('k');
+            history.replaceState({}, '', mockUrl);
+
+            const chave = new URLSearchParams(window.location.search).get('k') || '';
+            log(`Key from URL: "${chave}" (empty)`);
+
+            testScriptLoad();
+        }
+
+        // Check current URL
+        const currentKey = new URLSearchParams(window.location.search).get('k') || '';
+        log(`Current key in URL: "${currentKey}"`);
+        log(`Base URL: ${baseurl}`);
+    </script>
+</body>
+</html>

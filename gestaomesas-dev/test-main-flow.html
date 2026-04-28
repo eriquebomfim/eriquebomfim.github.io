@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>Test Main App Flow</title>
+    <style>
+        #loadingOverlay {
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            width: 100vw;
+            background: linear-gradient(to right, #17365d, #2563eb);
+            font-size: 1em;
+            z-index: 9999;
+            font-weight: 600;
+            position: fixed;
+            top: 0;
+            left: 0;
+            color: white;
+            transition: opacity 0.3s ease-out;
+        }
+
+        .splash-title {
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.35);
+            font-size: 2.2em;
+            margin-bottom: 30px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .loading-spinner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #93c5fd;
+            border-right-color: #60a5fa;
+            border-bottom-color: #3b82f6;
+            border-left-color: #2563eb;
+            animation: spin 1.2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-messages {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1em;
+            margin-top: 20px;
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .loading-message {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .loading-message.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        button {
+            padding: 10px 20px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        #log {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        #content {
+            display: none;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="loadingOverlay">
+        <h1 class="splash-title">eMesas</h1>
+        <div class="loading-spinner"></div>
+        <div class="loading-messages" id="loadingMessages">
+            <div class="loading-message active">Carregando dados das mesas...</div>
+            <div class="loading-message">Verificando disponibilidade...</div>
+            <div class="loading-message">Sincronizando com a planilha...</div>
+            <div class="loading-message">Preparando interface...</div>
+            <div class="loading-message">Quase pronto...</div>
+        </div>
+    </div>
+
+    <h1>Test Main App Flow</h1>
+    <p>Testing the exact flow from index.html with debugging.</p>
+
+    <button onclick="testSuccessfulFlow()">Test Successful Flow</button>
+    <button onclick="testAccessDeniedFlow()">Test Access Denied Flow</button>
+    <button onclick="testErrorFlow()">Test Error Flow (No Data)</button>
+
+    <div id="content">
+        <h2>App Content Loaded</h2>
+        <p>This simulates the app content that would be loaded.</p>
+    </div>
+
+    <div id="log"></div>
+
+    <script>
+        const log = (msg) => {
+            const logDiv = document.getElementById('log');
+            logDiv.innerHTML += `[${new Date().toLocaleTimeString()}] ${msg}<br>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(msg);
+        };
+
+        // Copy the simplified loader object from index.html
+        const loader = {
+            show(msg = "", autoclose = false) {
+                const loadingOverlay = document.querySelector('#loadingOverlay');
+
+                // Ensure loading overlay is visible
+                loadingOverlay.style.display = 'flex';
+                loadingOverlay.style.opacity = '1';
+
+                if (autoclose) {
+                    setTimeout(() => {
+                        this.hide();
+                    }, autoclose || 5000);
+                }
+            },
+
+            hide() {
+                log('loader.hide() called');
+                const loadingOverlay = document.querySelector('#loadingOverlay');
+                if (!loadingOverlay) {
+                    console.error('Loading overlay not found!');
+                    return;
+                }
+
+                // Fade out immediately (no final message, no delay)
+                loadingOverlay.style.opacity = '0';
+                log('Loader fading out...');
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                    loadingOverlay.style.opacity = '1';
+                    log('Loader hidden');
+                    document.getElementById('content').style.display = 'block';
+                }, 300);
+            }
+        };
+
+        // Simulate the _fetch function from index.html
+        function simulateFetch(url, callback) {
+            log(`_fetch called with URL: ${url}`);
+            loader.show();
+
+            // Simulate script loading
+            setTimeout(() => {
+                log('Script load simulated');
+                // Simulate callback with data
+                if (typeof callback === 'function') {
+                    // Determine response based on URL
+                    if (url.includes('access=denied')) {
+                        callback("Acesso negado: Chave inválida");
+                    } else if (url.includes('error=true')) {
+                        callback(null); // No data
+                    } else {
+                        // Successful data
+                        window.resp = '<div class="bloco" data-date="2025-04-12">Simulated app data</div>';
+                        callback(window.resp);
+                    }
+                }
+            }, 2000);
+        }
+
+        function testSuccessfulFlow() {
+            log('=== Testing Successful Flow ===');
+            document.getElementById('content').style.display = 'none';
+            document.getElementById('content').innerHTML = '<h2>App Content</h2><p>Loading simulated data...</p>';
+
+            // This simulates the exact flow from index.html
+            simulateFetch('https://example.com/data?k=valid', (data) => {
+                log('Callback executed, data received: ' + (data ? 'yes' : 'no'));
+                if (data) {
+                    if (/negado/i.test(data)) {
+                        log('Access denied detected');
+                        const loadingOverlay = document.querySelector('#loadingOverlay');
+                        loadingOverlay.innerHTML = `
+                            <div style="text-align: center; max-width: 300px;">
+                                <div style="width: 60px; height: 60px; margin: 0 auto 20px; border-radius: 50%; background: rgba(255, 255, 255, 0.2); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">
+                                    ⚠️
+                                </div>
+                                <h2 style="color: white; margin-bottom: 10px; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.35);">Acesso Negado</h2>
+                                <p style="color: rgba(255, 255, 255, 0.9); margin-bottom: 20px;">${data}</p>
+                                <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.9em;">Verifique sua chave de acesso e tente novamente.</p>
+                            </div>
+                        `;
+                        return;
+                    }
+                    log('Setting content and hiding loader');
+                    document.getElementById('content').innerHTML = '<h2>App Loaded Successfully</h2><p>Data: ' + data.substring(0, 50) + '...</p>';
+                    loader.hide();
+                    // init() would be called here in real app
+                } else {
+                    log('No data received');
+                    document.getElementById('content').innerHTML = '<p>Erro ao carregar os dados.</p>';
+                    try {
+                        loader.hide();
+                    } catch (e) {
+                        log(`Error hiding loader: ${e.message}`);
+                    }
+                }
+            });
+        }
+
+        function testAccessDeniedFlow() {
+            log('=== Testing Access Denied Flow ===');
+            document.getElementById('content').style.display = 'none';
+
+            simulateFetch('https://example.com/data?k=invalid&access=denied', (data) => {
+                log('Callback executed, data: ' + (data || 'null'));
+                if (data) {
+                    if (/negado/i.test(data)) {
+                        log('Access denied detected - showing error in overlay');
+                        const loadingOverlay = document.querySelector('#loadingOverlay');
+                        loadingOverlay.innerHTML = `
+                            <div style="text-align: center; max-width: 300px;">
+                                <div style="width: 60px; height: 60px; margin: 0 auto 20px; border-radius: 50%; background: rgba(255, 255, 255, 0.2); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">
+                                    ⚠️
+                                </div>
+                                <h2 style="color: white; margin-bottom: 10px; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.35);">Acesso Negado</h2>
+                                <p style="color: rgba(255, 255, 255, 0.9); margin-bottom: 20px;">${data}</p>
+                                <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.9em;">Verifique sua chave de acesso e tente novamente.</p>
+                            </div>
+                        `;
+                        log('Error message shown in overlay (not "stuck", showing error)');
+                        return;
+                    }
+                    log('This should not be reached for access denied');
+                } else {
+                    log('No data received (unexpected for access denied test)');
+                }
+            });
+        }
+
+        function testErrorFlow() {
+            log('=== Testing Error Flow (No Data) ===');
+            document.getElementById('content').style.display = 'none';
+
+            simulateFetch('https://example.com/data?error=true', (data) => {
+                log('Callback executed, data: ' + (data || 'null'));
+                if (data) {
+                    if (/negado/i.test(data)) {
+                        log('Access denied detected');
+                        // ... handle access denied
+                        return;
+                    }
+                    log('Setting content and hiding loader');
+                    document.getElementById('content').innerHTML = data;
+                    loader.hide();
+                } else {
+                    log('No data received - showing error and hiding loader');
+                    document.getElementById('content').innerHTML = '<p>Erro ao carregar os dados.</p>';
+                    try {
+                        loader.hide();
+                    } catch (e) {
+                        log(`Error hiding loader: ${e.message}`);
+                    }
+                }
+            });
+        }
+
+        // Auto-start a test
+        setTimeout(() => {
+            log('Page loaded - loader should be visible');
+        }, 100);
+    </script>
+</body>
+</html>
