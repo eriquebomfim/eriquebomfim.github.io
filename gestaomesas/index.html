@@ -1211,9 +1211,9 @@
     const init = () => {
         initClassicDatePicker();
         parseBackendData();
+        loadPeriods();
         renderCompactCalendar();
         setViewMode(state.config.viewMode || VIEW_MODES.CALENDAR);
-        loadPeriods();
     };
 
     const _fetch = (url, callback, _async = false) => {
