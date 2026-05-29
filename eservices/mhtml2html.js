@@ -43,9 +43,23 @@ function parsePart(part) {
 
 // ── 5. Decodificar quoted-printable ───────────────────────────────────────────
 function decodeQP(str) {
-  return str
-    .replace(/=\r?\n/g, "")           // soft line break
-    .replace(/=([0-9A-Fa-f]{2})/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
+  const normalized = str.replace(/=\r?\n/g, ""); // soft line break
+  const bytes = [];
+
+  for (let i = 0; i < normalized.length; i++) {
+    if (
+      normalized[i] === "=" &&
+      i + 2 < normalized.length &&
+      /[0-9A-Fa-f]{2}/.test(normalized.slice(i + 1, i + 3))
+    ) {
+      bytes.push(parseInt(normalized.slice(i + 1, i + 3), 16));
+      i += 2;
+      continue;
+    }
+    bytes.push(normalized.charCodeAt(i) & 0xff);
+  }
+
+  return Buffer.from(bytes).toString("utf8");
 }
 
 // ── 6. Processar partes ───────────────────────────────────────────────────────
