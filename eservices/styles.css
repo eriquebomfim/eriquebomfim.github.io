@@ -162,6 +162,15 @@ input:focus {
   color: var(--error);
 }
 
+.footnote {
+  margin: 16px 0 0;
+  padding-top: 10px;
+  border-top: 1px dashed var(--line);
+  font-size: 12px;
+  line-height: 1.4;
+  opacity: 0.75;
+}
+
 /* ── Carousel de novidades ───────────────────────────────── */
 .carousel {
   border: 1px solid var(--line);
