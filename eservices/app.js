@@ -4,6 +4,12 @@
   var WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxaT7ZnJM9OM1lWmI4TrW2cxo6w4Cv4PxMzdobm0YjVcBb_6EqgiHKn2jLq50OnEL0S/exec";
   var form = document.getElementById("newsletterForm");
   var feedback = document.getElementById("feedback");
+  var nameField = document.getElementById("nameField");
+  var nameInput = document.getElementById("name");
+  var submitButton = document.getElementById("submitButton");
+  var toggleModeLink = document.getElementById("toggleModeLink");
+  var currentAction = "subscribe";
+  var hideNameTimer = null;
 
   function setFeedback(message, type) {
     feedback.textContent = message || "";
@@ -17,7 +23,7 @@
     var data = new FormData(form);
     return {
       action: action,
-      name: (data.get("name") || "").toString().trim(),
+      name: action === "subscribe" ? (data.get("name") || "").toString().trim() : "",
       email: (data.get("email") || "").toString().trim()
     };
   }
@@ -32,12 +38,65 @@
     return "";
   }
 
+  function applyMode(action) {
+    currentAction = action;
+
+    if (hideNameTimer) {
+      clearTimeout(hideNameTimer);
+      hideNameTimer = null;
+    }
+
+    var isSubscribe = action === "subscribe";
+    nameInput.required = isSubscribe;
+    submitButton.textContent = isSubscribe ? "Assinar" : "Confirmar cancelamento";
+    toggleModeLink.textContent = isSubscribe ? "Cancelar assinatura" : "Voltar para assinatura";
+
+    // Quick transition to make layout switch feel immediate without abrupt jump.
+    nameField.style.overflow = "hidden";
+    nameField.style.transition = "opacity 140ms ease, max-height 180ms ease, margin 180ms ease";
+
+    if (isSubscribe) {
+      nameField.hidden = false;
+      nameField.style.maxHeight = "0";
+      nameField.style.opacity = "0";
+      nameField.style.marginTop = "0";
+      nameField.style.marginBottom = "0";
+      requestAnimationFrame(function () {
+        nameField.style.maxHeight = "120px";
+        nameField.style.opacity = "1";
+        nameField.style.marginTop = "";
+        nameField.style.marginBottom = "";
+      });
+    } else {
+      nameField.hidden = false;
+      nameField.style.maxHeight = "120px";
+      nameField.style.opacity = "1";
+      requestAnimationFrame(function () {
+        nameField.style.maxHeight = "0";
+        nameField.style.opacity = "0";
+        nameField.style.marginTop = "0";
+        nameField.style.marginBottom = "0";
+      });
+      hideNameTimer = setTimeout(function () {
+        nameField.hidden = true;
+      }, 190);
+    }
+
+    if (!isSubscribe) {
+      nameInput.value = "";
+    }
+    setFeedback("", "");
+  }
+
   function setLoading(isLoading) {
-    var buttons = document.querySelectorAll("button[data-action]");
+    var buttons = document.querySelectorAll("#submitButton");
     buttons.forEach(function (button) {
       button.disabled = isLoading;
       button.setAttribute("aria-busy", isLoading ? "true" : "false");
     });
+    toggleModeLink.setAttribute("aria-disabled", isLoading ? "true" : "false");
+    toggleModeLink.style.pointerEvents = isLoading ? "none" : "auto";
+    toggleModeLink.style.opacity = isLoading ? "0.5" : "0.8";
   }
 
   async function send(action) {
@@ -80,12 +139,13 @@
 
   form.addEventListener("submit", function (event) {
     event.preventDefault();
-    send("subscribe");
+    send(currentAction);
   });
 
-  document.querySelectorAll("button[data-action]").forEach(function (button) {
-    button.addEventListener("click", function () {
-      send(button.dataset.action);
-    });
+  toggleModeLink.addEventListener("click", function (event) {
+    event.preventDefault();
+    applyMode(currentAction === "subscribe" ? "unsubscribe" : "subscribe");
   });
+
+  applyMode(currentAction);
 })();
