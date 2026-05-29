@@ -24,7 +24,8 @@
     return {
       action: action,
       name: action === "subscribe" ? (data.get("name") || "").toString().trim() : "",
-      email: (data.get("email") || "").toString().trim()
+      email: (data.get("email") || "").toString().trim(),
+      emesas: action === "subscribe" ? (document.getElementById("emesas").checked ? 1 : 0) : ""
     };
   }
 
@@ -197,6 +198,7 @@
   applyMode(currentAction);
 
   // --- Carousel de novidades ---
+  var CAROUSEL_CACHE_KEY = "eservices_updates_v1";
   var carouselEl    = document.getElementById("updatesCarousel");
   var carouselTit   = document.getElementById("carouselTitulo");
   var carouselDesc  = document.getElementById("carouselDesc");
@@ -210,11 +212,13 @@
   function renderSlide(idx) {
     var item = carouselItems[idx];
     if (!item) return;
-    carouselTit.textContent  = item.titulo  || "";
+    carouselTit.textContent  = item.titulo   || "";
     carouselDesc.textContent = item.descricao || "";
     carouselInd.textContent  = (idx + 1) + " / " + carouselItems.length;
     btnPrev.disabled = carouselItems.length <= 1;
     btnNext.disabled = carouselItems.length <= 1;
+    carouselSlideBtn.style.cursor = item.link ? "pointer" : "default";
+    carouselSlideBtn.setAttribute("aria-disabled", item.link ? "false" : "true");
   }
 
   function goTo(idx) {
@@ -232,17 +236,57 @@
     startAutoPlay();
   }
 
+  function loadCarousel(data) {
+    carouselItems = data;
+    carouselIdx   = 0;
+    clearInterval(carouselTimer);
+    carouselEl.hidden = false;
+    renderSlide(0);
+    startAutoPlay();
+  }
+
+  var popupEl    = document.getElementById("updatePopup");
+  var popupFrame  = document.getElementById("popupFrame");
+  var popupClose  = document.getElementById("popupClose");
+  var carouselSlideBtn = document.getElementById("carouselSlide");
+
+  carouselSlideBtn.addEventListener("click", function () {
+    var item = carouselItems[carouselIdx];
+    if (!item || !item.link) return;
+    popupFrame.src = item.link;
+    popupEl.showModal();
+  });
+
+  popupClose.addEventListener("click", function () {
+    popupEl.close();
+    popupFrame.src = "";
+  });
+
+  popupEl.addEventListener("click", function (e) {
+    if (e.target === popupEl) { popupEl.close(); popupFrame.src = ""; }
+  });
+
   btnPrev.addEventListener("click", function () { goTo(carouselIdx - 1); resetAutoPlay(); });
   btnNext.addEventListener("click", function () { goTo(carouselIdx + 1); resetAutoPlay(); });
 
+  // 1) Renderiza imediatamente a partir do cache
+  try {
+    var cached = localStorage.getItem(CAROUSEL_CACHE_KEY);
+    if (cached) {
+      var cachedData = JSON.parse(cached);
+      if (Array.isArray(cachedData) && cachedData.length > 0) {
+        loadCarousel(cachedData);
+      }
+    }
+  } catch (e) { /* storage indisponível */ }
+
+  // 2) Busca dados frescos e atualiza cache + carrossel
   fetch(WEBHOOK_URL + "?action=updates")
     .then(function (r) { return r.json(); })
     .then(function (data) {
       if (!Array.isArray(data) || data.length === 0) return;
-      carouselItems = data;
-      carouselEl.hidden = false;
-      renderSlide(0);
-      startAutoPlay();
+      try { localStorage.setItem(CAROUSEL_CACHE_KEY, JSON.stringify(data)); } catch (e) {}
+      loadCarousel(data);
     })
     .catch(function () { /* carrossel silencioso se offline */ });
 })();

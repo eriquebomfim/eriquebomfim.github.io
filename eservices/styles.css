@@ -238,6 +238,97 @@ input:focus {
   cursor: default;
 }
 
+/* Slide clicável */
+.carousel-slide {
+  all: unset;
+  display: block;
+  width: 100%;
+  text-align: left;
+  border-radius: 8px;
+  padding: 2px 0;
+  transition: background 0.15s ease;
+}
+
+.carousel-slide:hover:not([aria-disabled="true"]) {
+  background: rgba(201, 117, 43, 0.08);
+}
+
+.carousel-slide[aria-disabled="true"] {
+  cursor: default;
+}
+
+/* Popup */
+.update-popup {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 0;
+  width: min(720px, 92vw);
+  height: min(520px, 80vh);
+  background: var(--cream);
+  box-shadow: 0 24px 64px rgba(0,0,0,0.22);
+  overflow: hidden;
+}
+
+.update-popup::backdrop {
+  background: rgba(32, 33, 31, 0.45);
+  backdrop-filter: blur(2px);
+}
+
+.popup-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  z-index: 1;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(245, 239, 226, 0.9);
+  color: var(--ink);
+  width: 28px;
+  height: 28px;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 0.15s ease;
+}
+
+.popup-close:hover {
+  background: #fff;
+}
+
+.popup-frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Checkbox eMesas */
+.field-check {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.field-check input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  accent-color: var(--olive);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.field-check span {
+  font-size: 14px;
+  font-weight: 500;
+  user-select: none;
+}
+
 @keyframes fade-in {
   from { opacity: 0; transform: translateY(4px); }
   to   { opacity: 1; transform: translateY(0); }

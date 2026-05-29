@@ -30,10 +30,10 @@
 
         <div id="updatesCarousel" class="carousel" aria-label="Novidades" aria-live="polite" hidden>
           <div class="carousel-track">
-            <div class="carousel-slide" id="carouselSlide">
+            <button class="carousel-slide" id="carouselSlide" type="button" aria-haspopup="dialog">
               <p class="carousel-titulo" id="carouselTitulo"></p>
               <p class="carousel-desc" id="carouselDesc"></p>
-            </div>
+            </button>
           </div>
           <div class="carousel-nav">
             <button class="carousel-btn" id="carouselPrev" aria-label="Anterior">&#8592;</button>
@@ -41,6 +41,12 @@
             <button class="carousel-btn" id="carouselNext" aria-label="Próximo">&#8594;</button>
           </div>
         </div>
+
+        <!-- Popup de detalhe do anúncio -->
+        <dialog id="updatePopup" class="update-popup">
+          <button class="popup-close" id="popupClose" aria-label="Fechar">&#x2715;</button>
+          <iframe id="popupFrame" class="popup-frame" src="" title="Detalhe do anúncio" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
+        </dialog>
 
         <form id="newsletterForm" class="form" novalidate>
 
@@ -65,6 +71,11 @@
               autocomplete="email"
               required
             />
+          </label>
+
+          <label class="field field-check" id="emesasField" for="emesas">
+            <input id="emesas" name="emesas" type="checkbox" value="1" />
+            <span>Incluir eMesas</span>
           </label>
 
           <div class="actions">
