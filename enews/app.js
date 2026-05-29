@@ -1,11 +1,9 @@
 (function () {
   "use strict";
 
-  var WEBHOOK_KEY = "enews_webhook_url";
+  var WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxaT7ZnJM9OM1lWmI4TrW2cxo6w4Cv4PxMzdobm0YjVcBb_6EqgiHKn2jLq50OnEL0S/exec";
   var form = document.getElementById("newsletterForm");
   var feedback = document.getElementById("feedback");
-  var webhookInput = document.getElementById("webhook");
-  var saveWebhookBtn = document.getElementById("saveWebhook");
 
   function setFeedback(message, type) {
     feedback.textContent = message || "";
@@ -13,23 +11,6 @@
     if (type) {
       feedback.classList.add(type);
     }
-  }
-
-  function loadWebhook() {
-    var stored = localStorage.getItem(WEBHOOK_KEY) || "";
-    webhookInput.value = stored;
-    return stored;
-  }
-
-  function saveWebhook() {
-    var url = webhookInput.value.trim();
-    if (!url) {
-      setFeedback("Informe a URL do webhook para continuar.", "error");
-      return;
-    }
-
-    localStorage.setItem(WEBHOOK_KEY, url);
-    setFeedback("Webhook salvo no navegador.", "ok");
   }
 
   function getPayload(action) {
@@ -60,12 +41,6 @@
   }
 
   async function send(action) {
-    var webhook = (localStorage.getItem(WEBHOOK_KEY) || "").trim();
-    if (!webhook) {
-      setFeedback("Configure a URL do webhook antes de enviar.", "error");
-      return;
-    }
-
     var payload = getPayload(action);
     var error = validate(payload);
 
@@ -79,6 +54,7 @@
 
     try {
       var response = await fetch(webhook, {
+      var response = await fetch(WEBHOOK_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -108,7 +84,4 @@
       send(button.dataset.action);
     });
   });
-
-  saveWebhookBtn.addEventListener("click", saveWebhook);
-  loadWebhook();
 })();

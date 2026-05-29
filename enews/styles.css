@@ -147,13 +147,6 @@ input:focus {
   color: var(--ink);
 }
 
-.btn-small {
-  width: fit-content;
-  margin-top: 8px;
-  background: var(--amber);
-  color: #fff9f0;
-}
-
 .feedback {
   min-height: 22px;
   margin: 4px 0 0;
@@ -167,25 +160,6 @@ input:focus {
 
 .feedback.error {
   color: var(--error);
-}
-
-.config {
-  margin-top: 16px;
-  border-top: 1px dashed var(--line);
-  padding-top: 12px;
-}
-
-.config summary {
-  cursor: pointer;
-  user-select: none;
-  font-weight: 600;
-  margin-bottom: 10px;
-}
-
-.hint {
-  margin: 8px 0 0;
-  font-size: 12px;
-  opacity: 0.78;
 }
 
 .bg-shape {
