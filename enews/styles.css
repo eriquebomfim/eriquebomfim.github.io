@@ -1,0 +1,250 @@
+:root {
+  --cream: #f5efe2;
+  --sand: #dcccad;
+  --ink: #20211f;
+  --olive: #4e5d3f;
+  --amber: #c9752b;
+  --card: rgba(248, 242, 229, 0.86);
+  --line: rgba(32, 33, 31, 0.2);
+  --ok: #255f38;
+  --error: #8f2d1e;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: "Space Grotesk", sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 12% 18%, rgba(201, 117, 43, 0.28), transparent 35%),
+    radial-gradient(circle at 82% 14%, rgba(78, 93, 63, 0.24), transparent 33%),
+    repeating-linear-gradient(
+      -22deg,
+      rgba(255, 255, 255, 0.05) 0,
+      rgba(255, 255, 255, 0.05) 14px,
+      rgba(0, 0, 0, 0.02) 14px,
+      rgba(0, 0, 0, 0.02) 28px
+    ),
+    linear-gradient(140deg, var(--cream), var(--sand));
+  overflow-x: hidden;
+}
+
+.shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px 18px;
+}
+
+.card {
+  width: min(560px, 100%);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 28px;
+  background: var(--card);
+  backdrop-filter: blur(3px);
+  box-shadow:
+    0 30px 70px rgba(0, 0, 0, 0.12),
+    0 8px 18px rgba(0, 0, 0, 0.08);
+  animation: card-in 0.6s cubic-bezier(0.2, 0.7, 0.1, 1) both;
+}
+
+.eyebrow {
+  margin: 0;
+  font-family: "IBM Plex Mono", monospace;
+  letter-spacing: 0.08em;
+  font-size: 12px;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+h1 {
+  margin: 8px 0 8px;
+  font-size: clamp(30px, 6vw, 46px);
+  line-height: 1;
+}
+
+.subtitle {
+  margin: 0 0 20px;
+  max-width: 38ch;
+  opacity: 0.9;
+}
+
+.form {
+  display: grid;
+  gap: 12px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.field span {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 13px;
+  font: inherit;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--ink);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--olive);
+  transform: translateY(-1px);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.btn {
+  border: 0;
+  border-radius: 999px;
+  padding: 11px 18px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.18s ease, filter 0.18s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.02);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--olive), #3d4a33);
+  color: #f9f6ee;
+}
+
+.btn-ghost {
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+
+.btn-small {
+  width: fit-content;
+  margin-top: 8px;
+  background: var(--amber);
+  color: #fff9f0;
+}
+
+.feedback {
+  min-height: 22px;
+  margin: 4px 0 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.feedback.ok {
+  color: var(--ok);
+}
+
+.feedback.error {
+  color: var(--error);
+}
+
+.config {
+  margin-top: 16px;
+  border-top: 1px dashed var(--line);
+  padding-top: 12px;
+}
+
+.config summary {
+  cursor: pointer;
+  user-select: none;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.hint {
+  margin: 8px 0 0;
+  font-size: 12px;
+  opacity: 0.78;
+}
+
+.bg-shape {
+  position: fixed;
+  border-radius: 999px;
+  z-index: -1;
+  filter: blur(6px);
+  animation: drift 11s ease-in-out infinite alternate;
+}
+
+.bg-shape-1 {
+  width: 240px;
+  height: 240px;
+  background: rgba(201, 117, 43, 0.27);
+  top: -40px;
+  left: -40px;
+}
+
+.bg-shape-2 {
+  width: 300px;
+  height: 300px;
+  background: rgba(78, 93, 63, 0.2);
+  bottom: -60px;
+  right: -70px;
+  animation-delay: 1.3s;
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes drift {
+  from {
+    transform: translate(0, 0);
+  }
+  to {
+    transform: translate(14px, -12px);
+  }
+}
+
+@media (max-width: 560px) {
+  .card {
+    padding: 22px;
+    border-radius: 18px;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+    text-align: center;
+  }
+}
