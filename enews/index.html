@@ -29,14 +29,6 @@
         </p>
 
         <form id="newsletterForm" class="form" novalidate>
-          <div class="actions" aria-label="Escolha a acao">
-            <button type="button" data-mode="subscribe" class="btn btn-primary" aria-pressed="true">
-              Assinar
-            </button>
-            <button type="button" data-mode="unsubscribe" class="btn btn-ghost" aria-pressed="false">
-              Cancelar assinatura
-            </button>
-          </div>
 
           <label id="nameField" class="field" for="name">
             <span>Nome</span>
@@ -65,6 +57,17 @@
             <button id="submitButton" type="submit" class="btn btn-primary">
               Assinar
             </button>
+          </div>
+
+          <div class="actions" style="margin-top: -4px;">
+            <a
+              id="toggleModeLink"
+              href="#"
+              aria-label="Alternar entre assinar e cancelar"
+              style="font-size: 14px; opacity: 0.8; text-decoration: underline; text-underline-offset: 2px;"
+            >
+              Cancelar assinatura
+            </a>
           </div>
 
           <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
