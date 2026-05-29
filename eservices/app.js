@@ -6,6 +6,7 @@
   var feedback = document.getElementById("feedback");
   var nameField = document.getElementById("nameField");
   var nameInput = document.getElementById("name");
+  var emesasLabel = document.getElementById("emesasLabel");
   var submitButton = document.getElementById("submitButton");
   var toggleModeLink = document.getElementById("toggleModeLink");
   var currentAction = "subscribe";
@@ -49,8 +50,19 @@
 
     var isSubscribe = action === "subscribe";
     nameInput.required = isSubscribe;
+    if (emesasLabel) {
+      emesasLabel.textContent = isSubscribe ? "Incluir eMesas" : "Remover eMesas";
+    }
     submitButton.textContent = isSubscribe ? "Assinar" : "Confirmar cancelamento";
     toggleModeLink.textContent = isSubscribe ? "Cancelar assinatura" : "Voltar para assinatura";
+
+    if (carouselEl) {
+      if (isSubscribe) {
+        carouselEl.hidden = carouselItems.length === 0;
+      } else {
+        carouselEl.hidden = true;
+      }
+    }
 
     // Quick transition to make layout switch feel immediate without abrupt jump.
     nameField.style.overflow = "hidden";
@@ -240,7 +252,7 @@
     carouselItems = data;
     carouselIdx   = 0;
     clearInterval(carouselTimer);
-    carouselEl.hidden = false;
+    carouselEl.hidden = currentAction !== "subscribe";
     renderSlide(0);
     startAutoPlay();
   }
