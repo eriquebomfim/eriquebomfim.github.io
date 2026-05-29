@@ -162,6 +162,88 @@ input:focus {
   color: var(--error);
 }
 
+/* ── Carousel de novidades ───────────────────────────────── */
+.carousel {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 16px 10px;
+  background: rgba(255, 255, 255, 0.45);
+  margin-bottom: 18px;
+  min-height: 72px;
+}
+
+.carousel-track {
+  overflow: hidden;
+}
+
+.carousel-slide {
+  animation: fade-in 0.3s ease;
+}
+
+.carousel-titulo {
+  margin: 0 0 4px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--amber);
+}
+
+.carousel-desc {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+  opacity: 0.88;
+}
+
+.carousel-nav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.carousel-indicator {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  opacity: 0.6;
+  flex: 1;
+  text-align: center;
+}
+
+.carousel-btn {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--ink);
+  width: 26px;
+  height: 26px;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease;
+  padding: 0;
+}
+
+.carousel-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.carousel-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── bg shapes ───────────────────────────────────────────── */
 .bg-shape {
   position: fixed;
   border-radius: 999px;

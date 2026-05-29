@@ -195,4 +195,54 @@
   });
 
   applyMode(currentAction);
+
+  // --- Carousel de novidades ---
+  var carouselEl    = document.getElementById("updatesCarousel");
+  var carouselTit   = document.getElementById("carouselTitulo");
+  var carouselDesc  = document.getElementById("carouselDesc");
+  var carouselInd   = document.getElementById("carouselIndicator");
+  var btnPrev       = document.getElementById("carouselPrev");
+  var btnNext       = document.getElementById("carouselNext");
+  var carouselItems = [];
+  var carouselIdx   = 0;
+  var carouselTimer = null;
+
+  function renderSlide(idx) {
+    var item = carouselItems[idx];
+    if (!item) return;
+    carouselTit.textContent  = item.titulo  || "";
+    carouselDesc.textContent = item.descricao || "";
+    carouselInd.textContent  = (idx + 1) + " / " + carouselItems.length;
+    btnPrev.disabled = carouselItems.length <= 1;
+    btnNext.disabled = carouselItems.length <= 1;
+  }
+
+  function goTo(idx) {
+    carouselIdx = (idx + carouselItems.length) % carouselItems.length;
+    renderSlide(carouselIdx);
+  }
+
+  function startAutoPlay() {
+    if (carouselItems.length <= 1) return;
+    carouselTimer = setInterval(function () { goTo(carouselIdx + 1); }, 5000);
+  }
+
+  function resetAutoPlay() {
+    clearInterval(carouselTimer);
+    startAutoPlay();
+  }
+
+  btnPrev.addEventListener("click", function () { goTo(carouselIdx - 1); resetAutoPlay(); });
+  btnNext.addEventListener("click", function () { goTo(carouselIdx + 1); resetAutoPlay(); });
+
+  fetch(WEBHOOK_URL + "?action=updates")
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      if (!Array.isArray(data) || data.length === 0) return;
+      carouselItems = data;
+      carouselEl.hidden = false;
+      renderSlide(0);
+      startAutoPlay();
+    })
+    .catch(function () { /* carrossel silencioso se offline */ });
 })();

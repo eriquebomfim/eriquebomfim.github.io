@@ -25,8 +25,22 @@
         <p class="eyebrow">eservices</p>
         <h1>Newsletter</h1>
         <p class="subtitle">
-          Fique por dentro do que já está facilitando arotina.
+          Fique por dentro do que já está facilitando a rotina.
         </p>
+
+        <div id="updatesCarousel" class="carousel" aria-label="Novidades" aria-live="polite" hidden>
+          <div class="carousel-track">
+            <div class="carousel-slide" id="carouselSlide">
+              <p class="carousel-titulo" id="carouselTitulo"></p>
+              <p class="carousel-desc" id="carouselDesc"></p>
+            </div>
+          </div>
+          <div class="carousel-nav">
+            <button class="carousel-btn" id="carouselPrev" aria-label="Anterior">&#8592;</button>
+            <span class="carousel-indicator" id="carouselIndicator"></span>
+            <button class="carousel-btn" id="carouselNext" aria-label="Próximo">&#8594;</button>
+          </div>
+        </div>
 
         <form id="newsletterForm" class="form" novalidate>
 
