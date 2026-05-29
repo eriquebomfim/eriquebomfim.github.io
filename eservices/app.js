@@ -23,7 +23,7 @@
   }
 
   function validate(payload) {
-    if (!payload.name) {
+    if (payload.action === "subscribe" && !payload.name) {
       return "Informe o nome.";
     }
     if (!payload.email || !/^\S+@\S+\.\S+$/.test(payload.email)) {
