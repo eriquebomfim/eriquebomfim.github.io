@@ -123,7 +123,11 @@
     }
   }
 
-  function getFriendlySuccessMessage(action, text) {
+  function getFriendlySuccessMessage(action, text, payload) {
+    if (action === "subscribe" && payload && String(payload.emesas) === "1") {
+      return "Assinatura registrada com sucesso. Você receberá um email com instruções de acesso ao eMesas.";
+    }
+
     var defaultMessage = action === "subscribe"
       ? "Assinatura registrada com sucesso."
       : "Cancelamento registrado com sucesso.";
@@ -186,7 +190,7 @@
         throw new Error(getFriendlyErrorMessage(text));
       }
 
-      setFeedback(getFriendlySuccessMessage(action, text), "ok");
+      setFeedback(getFriendlySuccessMessage(action, text, payload), "ok");
       if (action === "subscribe") {
         form.reset();
       }
