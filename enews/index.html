@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>eservices Newsletter</title>
+    <meta
+      name="description"
+      content="Assine ou cancele a newsletter eservices de forma rapida."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="bg-shape bg-shape-1" aria-hidden="true"></div>
+    <div class="bg-shape bg-shape-2" aria-hidden="true"></div>
+
+    <main class="shell">
+      <section class="card">
+        <p class="eyebrow">eservices</p>
+        <h1>Newsletter</h1>
+        <p class="subtitle">
+          Receba updates de novidades que facilitem seu dia-a-dia
+        </p>
+
+        <form id="newsletterForm" class="form" novalidate>
+          <div class="actions" aria-label="Escolha a acao">
+            <button type="button" data-mode="subscribe" class="btn btn-primary" aria-pressed="true">
+              Assinar
+            </button>
+            <button type="button" data-mode="unsubscribe" class="btn btn-ghost" aria-pressed="false">
+              Cancelar assinatura
+            </button>
+          </div>
+
+          <label id="nameField" class="field" for="name">
+            <span>Nome</span>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              placeholder="Seu nome"
+              autocomplete="name"
+            />
+          </label>
+
+          <label class="field" for="email">
+            <span>Email</span>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="voce@dominio.com"
+              autocomplete="email"
+              required
+            />
+          </label>
+
+          <div class="actions">
+            <button id="submitButton" type="submit" class="btn btn-primary">
+              Assinar
+            </button>
+          </div>
+
+          <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
+        </form>
+
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
