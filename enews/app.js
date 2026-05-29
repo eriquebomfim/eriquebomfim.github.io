@@ -53,7 +53,6 @@
     setFeedback("Enviando...", "");
 
     try {
-      var response = await fetch(webhook, {
       var response = await fetch(WEBHOOK_URL, {
         method: "POST",
         headers: {
@@ -78,6 +77,11 @@
       setLoading(false);
     }
   }
+
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+    send("subscribe");
+  });
 
   document.querySelectorAll("button[data-action]").forEach(function (button) {
     button.addEventListener("click", function () {
