@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset='utf-8'>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
@@ -20,6 +21,7 @@
             --cinza: #ececec;
             --borda: #dddddd;
         }
+
         body {
             font-family: Arial, sans-serif;
             background-color: var(--fundo);
@@ -30,16 +32,18 @@
             -ms-user-select: none;
             user-select: none;
         }
+
         #app {
             max-width: 980px;
             margin: auto;
             background: var(--painel);
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             display: block;
             padding: 0 2.5rem 90px;
             min-height: calc(100vh - 60px);
         }
+
         #loadingOverlay {
             display: flex;
             flex-direction: column;
@@ -92,8 +96,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         .loading-messages {
@@ -119,27 +128,33 @@
             opacity: 1;
             transform: translateY(0);
         }
+
         #content,
         #compactCalendarView {
             display: none;
             padding-top: 72px;
         }
+
         #compactCalendarView {
             padding-bottom: 24px;
         }
+
         .bloco {
             margin-top: 5px;
         }
-        td.semana, td.data {
+
+        td.semana,
+        td.data {
             text-align: center;
             font-weight: bold;
             padding: 5px;
             border-radius: 6px;
             color: #2d3a5a;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
             font-size: 1.02em;
             letter-spacing: 0.5px;
         }
+
         td.ocupante {
             text-align: center;
             background-color: #e0e7ff;
@@ -148,11 +163,12 @@
             padding: 13px;
             cursor: pointer;
             transition: background 0.2s;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
             border: none;
             font-size: 1em;
             user-select: none;
         }
+
         td.ocupante {
             background-color: #e0e7ff;
             color: #aaa;
@@ -160,6 +176,7 @@
             opacity: 0.678;
             pointer-events: none;
         }
+
         td.ocupante.livre {
             background-color: var(--verde);
             color: #217a3a;
@@ -168,6 +185,7 @@
             pointer-events: auto;
             border: 2px dashed #4ade80;
         }
+
         td.me {
             background-color: var(--amarelo);
             color: #b45309;
@@ -175,10 +193,12 @@
             border: 2px dashed #f59e0b;
             pointer-events: auto;
         }
+
         td.me:hover {
             background-color: #fde68a;
             color: #92400e;
         }
+
         h1 {
             position: fixed;
             top: -16px;
@@ -190,10 +210,11 @@
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.35);
             font-size: 1.4em;
             padding: 10px 0;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             border-bottom: 3px solid #93c5fd;
             margin-left: -7px;
         }
+
         .semana {
             position: sticky;
             top: 50px;
@@ -202,6 +223,7 @@
             z-index: 999;
             width: 100vw;
         }
+
         .data {
             position: sticky;
             top: 80px;
@@ -210,9 +232,11 @@
             z-index: 998;
             width: 100vw;
         }
+
         table {
             margin-top: 2.4vh;
         }
+
         .calendar-month {
             border: 1px solid var(--borda);
             border-radius: 10px;
@@ -220,24 +244,28 @@
             margin-bottom: 14px;
             background: #fafcff;
         }
+
         .calendar-month-title {
             font-size: 1.08rem;
             font-weight: 700;
             margin-bottom: 10px;
             color: #1d4ed8;
         }
+
         .calendar-grid,
         .calendar-weekdays {
             display: grid;
             grid-template-columns: repeat(7, minmax(0, 1fr));
             gap: 6px;
         }
+
         .calendar-weekday {
             text-align: center;
             font-size: 0.78rem;
             font-weight: 700;
             color: #334155;
         }
+
         .calendar-day {
             border: 1px solid var(--borda);
             border-radius: 8px;
@@ -251,6 +279,7 @@
             gap: 4px;
             position: relative;
         }
+
         .calendar-day::before {
             content: '';
             position: absolute;
@@ -261,29 +290,36 @@
             opacity: var(--temperature-opacity, 0);
             transition: opacity 0.2s ease;
         }
-        .calendar-day > * {
+
+        .calendar-day>* {
             position: relative;
             z-index: 1;
         }
+
         .calendar-day.empty {
             background: transparent;
             border-color: transparent;
         }
+
         .calendar-day.empty::before {
             display: none;
         }
+
         .calendar-day .day-number {
             font-weight: 700;
         }
+
         .calendar-day.is-dark .day-number {
             color: #fff;
         }
+
         .calendar-day .day-head {
             display: flex;
             align-items: flex-start;
             gap: 4px;
             position: relative;
         }
+
         .calendar-day .day-load {
             font-size: 0.56rem;
             line-height: 1;
@@ -300,46 +336,54 @@
             right: -2px;
             z-index: 1;
         }
+
         .calendar-day .day-meta {
             font-size: 0.64rem;
             line-height: 1.2;
             color: #1f2937;
             margin-top: auto;
         }
+
         .calendar-day.is-dark .day-meta {
             color: #fff;
         }
-        }
+
         .calendar-day.is-pressing {
             outline: 2px solid #2563eb;
             outline-offset: 1px;
         }
+
         .calendar-day.is-green {
             background-color: var(--verde);
             cursor: pointer;
             border-color: #7dd3a2;
         }
+
         .calendar-day.is-yellow {
             background-color: var(--amarelo);
             cursor: pointer;
             border-color: #facc15;
         }
+
         .calendar-day.is-red {
             background-color: var(--vermelho);
             color: #991b1b;
             cursor: not-allowed;
         }
+
         .calendar-day.is-disabled {
             background-color: var(--cinza);
             color: #6b7280;
             cursor: not-allowed;
         }
+
         .calendar-day.is-holiday {
             background-color: #f8e9ee;
             color: #6b1028;
             cursor: not-allowed;
             border-color: #c98ea0;
         }
+
         .calendar-legend {
             display: flex;
             gap: 8px;
@@ -347,16 +391,30 @@
             margin: 0 0 10px;
             font-size: 0.77rem;
         }
+
         .legend-pill {
             padding: 4px 8px;
             border-radius: 999px;
             border: 1px solid #ddd;
             background: #fff;
         }
-        .legend-green { background: var(--verde); }
-        .legend-yellow { background: var(--amarelo); }
-        .legend-red { background: var(--vermelho); }
-        .legend-disabled { background: var(--cinza); }
+
+        .legend-green {
+            background: var(--verde);
+        }
+
+        .legend-yellow {
+            background: var(--amarelo);
+        }
+
+        .legend-red {
+            background: var(--vermelho);
+        }
+
+        .legend-disabled {
+            background: var(--cinza);
+        }
+
         footer {
             position: fixed;
             bottom: 0;
@@ -366,7 +424,7 @@
             border-top: 1px solid #ccc;
             box-sizing: border-box;
             background-color: #fff;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
             text-align: center;
             z-index: 998;
             display: flex;
@@ -374,10 +432,12 @@
             gap: 14px;
             align-items: center;
         }
+
         .hiddens {
             visibility: hidden;
             position: absolute;
         }
+
         footer button {
             background-color: #fff;
             color: #1f2937;
@@ -387,6 +447,7 @@
             cursor: pointer;
             font-size: 1rem;
         }
+
         .carregando {
             display: flex;
             justify-content: center;
@@ -394,25 +455,32 @@
             height: 70vh;
             padding-bottom: 11em;
         }
+
         .filtered .ocupante:not(.me):not(.livre) {
             display: none;
         }
+
         #filterButton {
             filter: opacity(0.5);
         }
+
         .filtered #filterButton {
             filter: none;
         }
+
         body.calendar-mode #content {
             display: none !important;
         }
+
         body.classic-mode #compactCalendarView {
             display: none !important;
         }
+
         body.calendar-mode .classic-only {
             opacity: 0.4;
             pointer-events: none;
         }
+
         .day-dialog-backdrop {
             display: none;
             position: fixed;
@@ -423,6 +491,7 @@
             justify-content: center;
             padding: 10px;
         }
+
         .day-dialog {
             width: min(520px, 96vw);
             max-height: 78vh;
@@ -433,22 +502,26 @@
             border: 1px solid #dbe2f1;
             padding: 14px;
         }
+
         .day-dialog h3 {
             margin: 0 0 8px;
             font-size: 1rem;
             color: #1e3a8a;
         }
+
         .day-dialog .subtitle {
             font-size: 0.82rem;
             color: #334155;
             margin-bottom: 10px;
         }
+
         .day-dialog table {
             width: 100%;
             border-collapse: collapse;
             margin: 0;
             font-size: 0.88rem;
         }
+
         .day-dialog th,
         .day-dialog td {
             border-bottom: 1px solid #e5e7eb;
@@ -456,16 +529,19 @@
             text-align: left;
             vertical-align: top;
         }
+
         .day-dialog th {
             background: #f3f6ff;
             position: sticky;
             top: 0;
         }
+
         .day-dialog-actions {
             display: flex;
             justify-content: flex-end;
             margin-top: 10px;
         }
+
         .day-dialog-actions button {
             border: 1px solid #d1d5db;
             border-radius: 8px;
@@ -473,6 +549,7 @@
             padding: 6px 10px;
             cursor: pointer;
         }
+
         .flatpickr-calendar {
             position: fixed;
             top: 32vh !important;
@@ -481,31 +558,38 @@
             width: 300px;
             display: none;
         }
+
         @media screen and (max-width: 640px) {
             #app {
                 padding: 0 0.6rem 88px;
             }
+
             h1 {
                 width: 102vw;
                 padding-left: 0.3rem;
             }
+
             .calendar-day {
                 min-height: 56px;
                 font-size: 0.72rem;
                 padding: 4px;
                 gap: 3px;
             }
+
             .calendar-day .day-load {
                 font-size: 0.48rem;
                 padding: 1px 3px;
                 right: -7vw;
             }
+
             .calendar-day .day-meta {
                 font-size: 0.56rem;
             }
+
             footer {
                 gap: 8px;
             }
+
             footer button {
                 padding: 8px 10px;
                 font-size: 0.88rem;
@@ -536,730 +620,747 @@
             font-weight: bold;
             color: white;
             padding: 1px 4px;
-            z-index: 20; /* Above day-load badge */
+            z-index: 20;
+            /* Above day-load badge */
             pointer-events: none;
             white-space: nowrap;
-            text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
         }
+
         .period-start {
             top: 2vh;
             left: -1px;
-            background: #1e3a8a; /* Navy blue */
+            background: #1e3a8a;
+            /* Navy blue */
             border-bottom-right-radius: 3px;
         }
+
         .period-end {
             top: 2vh;
             right: -1px;
-            background: #1e3a8a; /* Navy blue */
+            background: #1e3a8a;
+            /* Navy blue */
             border-top-left-radius: 3px;
         }
+
         .period-start::after {
             content: 'INÍCIO';
         }
+
         .period-end::after {
             content: 'FIM';
         }
     </style>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.9/flatpickr.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.9/l10n/pt.js"></script>
-<script>
-    toast = function (msg, timer = 3000) {
-        var display = document.querySelector(".toast");
-        if (!display) {
-            display = document.createElement("div");
-            display.classList.add("toast");
-            display.style = 'position:fixed;z-index:999;bottom:0px;background-color:lightgreen;color:darkgreen;text-align:center;width:100vw;padding:1em 0;';
-            document.body.append(display);
-        }
-        clearTimeout(timer);
-        timer = setTimeout(() => {
-            display.style.display = "none";
-        }, timer);    
-        display.style.display = "block";
-        display.innerHTML = msg;
-    }    
-</script>
-<script>
-    var calendarInput;
-    var calendarFlatpickr;
-    const baseurl = "https://script.google.com/macros/s/AKfycbxaT7ZnJM9OM1lWmI4TrW2cxo6w4Cv4PxMzdobm0YjVcBb_6EqgiHKn2jLq50OnEL0S/exec";
-    const isMobile = (/Mobi|Android/i.test(navigator.userAgent));
-    const VIEW_MODES = {
-        CALENDAR: 'calendar',
-        CLASSIC: 'classic'
-    };
-    const state = {
-        me: '',
-        dates: new Map(),
-        holidayDates: new Set(),
-        suspendedDates: new Set(),
-        freeDeskPairs: [],
-        myDeskPairs: [],
-        longPressTimer: null,
-        longPressTriggered: false,
-        longPressTarget: null,
-        periods: [],
-        config: { viewMode: VIEW_MODES.CALENDAR, periods: [] }
-    };
-
-    const openCalendar = () => {
-        if (document.body.classList.contains('calendar-mode')) {
-            toast('No modo calendário, selecione diretamente o dia no painel.', 2500);
-            return;
-        }
-        if (isMobile) {
-            calendarInput.click();
-            return;
-        }
-        if (calendarFlatpickr) {
-            calendarFlatpickr.toggle();
-        }
-    };
-
-    const filter = () => {
-        if (document.body.classList.contains('calendar-mode')) {
-            toast('Filtro disponível apenas na visualização clássica.', 2500);
-            return;
-        }
-        document.body.classList.toggle('filtered');
-    };
-
-    const loader = {
-        show(msg = "", autoclose = false) {
-            const loadingOverlay = document.querySelector('#loadingOverlay');
-
-            // Ensure loading overlay is visible
-            loadingOverlay.style.display = 'flex';
-            loadingOverlay.style.opacity = '1';
-
-            if (autoclose) {
-                setTimeout(() => {
-                    this.hide();
-                }, autoclose || 5000);
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.9/flatpickr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.9/l10n/pt.js"></script>
+    <script>
+        toast = function (msg, timer = 3000) {
+            var display = document.querySelector(".toast");
+            if (!display) {
+                display = document.createElement("div");
+                display.classList.add("toast");
+                display.style = 'position:fixed;z-index:999;bottom:0px;background-color:lightgreen;color:darkgreen;text-align:center;width:100vw;padding:1em 0;';
+                document.body.append(display);
             }
-        },
-
-        hide() {
-            console.log('loader.hide() called');
-            const loadingOverlay = document.querySelector('#loadingOverlay');
-            if (!loadingOverlay) {
-                console.error('Loading overlay not found!');
-                return;
-            }
-
-            // Fade out immediately (no final message, no delay)
-            loadingOverlay.style.opacity = '0';
-            console.log('Loader fading out...');
-            setTimeout(() => {
-                loadingOverlay.style.display = 'none';
-                loadingOverlay.style.opacity = '1';
-                console.log('Loader hidden');
-            }, 300);
-        }
-    };
-
-    const toISODate = (datasetDate) => (datasetDate || '').slice(0, 10);
-    const toBRDate = (isoDate) => {
-        const [year, month, day] = isoDate.split('-');
-        return `${day}/${month}/${year}`;
-    };
-    const monthKeyFromIso = (isoDate) => isoDate.slice(0, 7);
-    const monthLabelFromKey = (key) => {
-        const [year, month] = key.split('-');
-        const date = new Date(Number(year), Number(month) - 1, 1);
-        const text = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(date);
-        return text.charAt(0).toUpperCase() + text.slice(1);
-    };
-    const isWeekend = (isoDate) => {
-        const dt = new Date(`${isoDate}T00:00:00`);
-        const day = dt.getDay();
-        return day === 0 || day === 6;
-    };
-
-    const getWorkdayOccupancyTone = (dateInfo) => {
-        const deskStats = dateInfo?.deskStats;
-        const total = deskStats?.total || 0;
-        const occupied = deskStats?.occupied || 0;
-        if (!total) {
-            return null;
-        }
-
-        const ratio = Math.max(0, Math.min(1, occupied / total));
-
-        // Determine day type based on dateInfo
-        let baseColor;
-        if (dateInfo.mySeat) {
-            // Yellow day: user has reservation
-            baseColor = '#b45309'; // Dark orange
-        } else if (dateInfo.freeSeats.length) {
-            // Green day: has free seats
-            baseColor = '#217a3a'; // Dark green
-        } else {
-            // Red day: no vacancies
-            baseColor = '#dc2626'; // Dark red
-        }
-
-        // For holidays (would need to check dateInfo.holiday or similar)
-        // baseColor = '#7c3aed'; // Dark purple
-
-        // Calculate opacity: 0.1 (0% occupancy) to 1.0 (100% occupancy)
-        // Using a simple linear mapping for now
-        const overlayOpacity = (0.1 + ratio * 0.9).toFixed(3); // 0.1 to 1.0
-
-        return {
-            overlayColor: baseColor,
-            overlayOpacity: overlayOpacity
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                display.style.display = "none";
+            }, timer);
+            display.style.display = "block";
+            display.innerHTML = msg;
+        }    
+    </script>
+    <script>
+        var calendarInput;
+        var calendarFlatpickr;
+        const baseurl = "https://script.google.com/macros/s/AKfycbxaT7ZnJM9OM1lWmI4TrW2cxo6w4Cv4PxMzdobm0YjVcBb_6EqgiHKn2jLq50OnEL0S/exec";
+        const isMobile = (/Mobi|Android/i.test(navigator.userAgent));
+        const VIEW_MODES = {
+            CALENDAR: 'calendar',
+            CLASSIC: 'classic'
         };
-    };
+        const state = {
+            me: '',
+            dates: new Map(),
+            holidayDates: new Set(),
+            suspendedDates: new Set(),
+            freeDeskPairs: [],
+            myDeskPairs: [],
+            longPressTimer: null,
+            longPressTriggered: false,
+            longPressTarget: null,
+            periods: [],
+            config: { viewMode: VIEW_MODES.CALENDAR, periods: [] }
+        };
 
-    const getWorkdayOccupancyLabel = (ratio) => {
-        if (ratio >= 0.86) {
-            return 'Lotado';
-        }
-        if (ratio >= 0.61) {
-            return 'Crítico';
-        }
-        if (ratio >= 0.31) {
-            return 'Moderado';
-        }
-        return 'Tranquilo';
-    };
-
-    const saveConfig = () => {
-        const encoded = encodeURIComponent(JSON.stringify(state.config));
-        _fetch(`${baseurl}?action=setconfig&k=${chave}&config=${encoded}`, null);
-    };
-
-    const setViewMode = (mode) => {
-        const finalMode = mode === VIEW_MODES.CLASSIC ? VIEW_MODES.CLASSIC : VIEW_MODES.CALENDAR;
-        state.config.viewMode = finalMode;
-        saveConfig();
-        document.body.classList.toggle('calendar-mode', finalMode === VIEW_MODES.CALENDAR);
-        document.body.classList.toggle('classic-mode', finalMode === VIEW_MODES.CLASSIC);
-
-        const compact = document.querySelector('#compactCalendarView');
-        const content = document.querySelector('#content');
-        const toggle = document.querySelector('#viewModeToggle');
-        if (compact && content && toggle) {
-            if (finalMode === VIEW_MODES.CALENDAR) {
-                compact.style.display = 'block';
-                content.style.display = 'none';
-                toggle.textContent = 'Visão: Calendário';
-            } else {
-                compact.style.display = 'none';
-                content.style.display = 'block';
-                toggle.textContent = 'Visão: Clássica';
-            }
-        }
-    };
-
-    const toggleViewMode = () => {
-        const current = state.config.viewMode || VIEW_MODES.CALENDAR;
-        setViewMode(current === VIEW_MODES.CALENDAR ? VIEW_MODES.CLASSIC : VIEW_MODES.CALENDAR);
-    };
-
-    const parseBackendData = () => {
-        state.dates = new Map();
-        state.holidayDates = new Set();
-        state.suspendedDates = new Set();
-        state.freeDeskPairs = [];
-        state.myDeskPairs = [];
-
-        const blocks = document.querySelectorAll('.bloco');
-        let me = '';
-        blocks.forEach((block) => {
-            const isoDate = toISODate(block.dataset.date);
-            if (!isoDate) {
+        const openCalendar = () => {
+            if (document.body.classList.contains('calendar-mode')) {
+                toast('No modo calendário, selecione diretamente o dia no painel.', 2500);
                 return;
             }
-            const info = {
-                isoDate,
-                brDate: toBRDate(isoDate),
-                sheetname: block.dataset.sheetname,
-                col: block.dataset.col,
-                block,
-                freeSeats: [],
-                mySeat: null,
-                hasHoliday: false,
-                hasSuspendedOffice: false,
-                hasAnySeat: false,
-                deskStats: {
-                    free: 0,
-                    occupied: 0,
-                    total: 0
-                }
-            };
-
-            const occupants = block.querySelectorAll('.ocupante');
-            occupants.forEach((occupant) => {
-                const mesa = occupant.dataset.mesa;
-                const text = occupant.textContent.trim();
-                info.hasAnySeat = true;
-                if (/FERIADO/i.test(text)) {
-                    info.hasHoliday = true;
-                }
-                if (/EXPEDIENTE\s+SUSPENSO/i.test(text)) {
-                    info.hasSuspendedOffice = true;
-                }
-                if (occupant.classList.contains('livre')) {
-                    info.freeSeats.push({ mesa, element: occupant });
-                    state.freeDeskPairs.push([info.brDate, mesa]);
-                    info.deskStats.free += 1;
-                    info.deskStats.total += 1;
-                }
-                if (occupant.classList.contains('me')) {
-                    info.mySeat = { mesa, element: occupant, text };
-                    state.myDeskPairs.push([info.brDate, mesa]);
-                    if (!me) {
-                        me = text;
-                    }
-                }
-                if (!occupant.classList.contains('livre') && !/FERIADO|EXPEDIENTE\s+SUSPENSO/i.test(text)) {
-                    info.deskStats.occupied += 1;
-                    info.deskStats.total += 1;
-                }
-            });
-
-            if (info.hasHoliday) {
-                state.holidayDates.add(isoDate);
+            if (isMobile) {
+                calendarInput.click();
+                return;
             }
-            if (info.hasSuspendedOffice) {
-                state.suspendedDates.add(isoDate);
+            if (calendarFlatpickr) {
+                calendarFlatpickr.toggle();
             }
-            state.dates.set(isoDate, info);
-        });
+        };
 
-        state.me = me || (document.querySelector('.ocupante.me')?.textContent || '').trim();
-    };
+        const filter = () => {
+            if (document.body.classList.contains('calendar-mode')) {
+                toast('Filtro disponível apenas na visualização clássica.', 2500);
+                return;
+            }
+            document.body.classList.toggle('filtered');
+        };
 
-    const renderCompactCalendar = () => {
-        const host = document.querySelector('#compactCalendarView');
-        if (!host) {
-            return;
-        }
+        const loader = {
+            show(msg = "", autoclose = false) {
+                const loadingOverlay = document.querySelector('#loadingOverlay');
 
-        const allDates = Array.from(state.dates.keys()).sort();
-        if (!allDates.length) {
-            host.innerHTML = '<p>Nenhuma data encontrada.</p>';
-            return;
-        }
+                // Ensure loading overlay is visible
+                loadingOverlay.style.display = 'flex';
+                loadingOverlay.style.opacity = '1';
 
-        const monthKeys = [...new Set(allDates.map(monthKeyFromIso))];
-        const weekdays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'];
-        const html = [];
-        html.push('<div class="calendar-legend">');
-        html.push('<span class="legend-pill legend-green">Verde: livre para reservar</span>');
-        html.push('<span class="legend-pill legend-yellow">Amarelo: sua mesa (clique para remover)</span>');
-        html.push('<span class="legend-pill legend-red">Vermelho: sem vagas (somente leitura)</span>');
-        html.push('<span class="legend-pill legend-disabled">Cinza: fim de semana</span>');
-        html.push('<span class="legend-pill" style="background:#f8e9ee;border-color:#c98ea0;">Vinho: feriado/expediente suspenso</span>');
-        html.push('<span class="legend-pill">Selo X/Y: livres/ocupadas</span>');
-        html.push('<span class="legend-pill">Tom do dia: claro/frio = tranquilo, escuro/quente = lotado</span>');
-        html.push('</div>');
+                if (autoclose) {
+                    setTimeout(() => {
+                        this.hide();
+                    }, autoclose || 5000);
+                }
+            },
 
-        monthKeys.forEach((monthKey) => {
-            const [year, month] = monthKey.split('-').map(Number);
-            const firstDay = new Date(year, month - 1, 1);
-            const startWeekDay = firstDay.getDay();
-            const daysInMonth = new Date(year, month, 0).getDate();
+            hide() {
+                console.log('loader.hide() called');
+                const loadingOverlay = document.querySelector('#loadingOverlay');
+                if (!loadingOverlay) {
+                    console.error('Loading overlay not found!');
+                    return;
+                }
 
-            html.push(`<section class="calendar-month">`);
-            html.push(`<h2 class="calendar-month-title">${monthLabelFromKey(monthKey)}</h2>`);
-            html.push('<div class="calendar-weekdays">');
-            weekdays.forEach((wk) => html.push(`<div class="calendar-weekday">${wk}</div>`));
-            html.push('</div>');
-            html.push('<div class="calendar-grid">');
+                // Fade out immediately (no final message, no delay)
+                loadingOverlay.style.opacity = '0';
+                console.log('Loader fading out...');
+                setTimeout(() => {
+                    loadingOverlay.style.display = 'none';
+                    loadingOverlay.style.opacity = '1';
+                    console.log('Loader hidden');
+                }, 300);
+            }
+        };
 
-            for (let i = 0; i < startWeekDay; i += 1) {
-                html.push('<button class="calendar-day empty" type="button" disabled></button>');
+        const toISODate = (datasetDate) => (datasetDate || '').slice(0, 10);
+        const toBRDate = (isoDate) => {
+            const [year, month, day] = isoDate.split('-');
+            return `${day}/${month}/${year}`;
+        };
+        const monthKeyFromIso = (isoDate) => isoDate.slice(0, 7);
+        const monthLabelFromKey = (key) => {
+            const [year, month] = key.split('-');
+            const date = new Date(Number(year), Number(month) - 1, 1);
+            const text = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(date);
+            return text.charAt(0).toUpperCase() + text.slice(1);
+        };
+        const isWeekend = (isoDate) => {
+            const dt = new Date(`${isoDate}T00:00:00`);
+            const day = dt.getDay();
+            return day === 0 || day === 6;
+        };
+
+        const getWorkdayOccupancyTone = (dateInfo) => {
+            const deskStats = dateInfo?.deskStats;
+            const total = deskStats?.total || 0;
+            const occupied = deskStats?.occupied || 0;
+            if (!total) {
+                return null;
             }
 
-            for (let day = 1; day <= daysInMonth; day += 1) {
-                const isoDate = `${String(year).padStart(4, '0')}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                const dateInfo = state.dates.get(isoDate);
-                const holiday = state.holidayDates.has(isoDate);
-                const suspendedOffice = state.suspendedDates.has(isoDate);
-                const weekend = isWeekend(isoDate);
-                const disabledByRule = weekend || holiday || suspendedOffice;
+            const ratio = Math.max(0, Math.min(1, occupied / total));
 
-                let klass = 'calendar-day is-disabled';
-                let meta = weekend ? 'Fim de semana' : (suspendedOffice ? 'Expediente suspenso' : (holiday ? 'Feriado' : 'Sem dados'));
-                let readOnlyFlag = '1';
-                let dayStyle = '';
-                let loadBadge = '';
-                let occupancyLabel = '';
-
-                if (holiday || suspendedOffice) {
-                    klass = 'calendar-day is-holiday';
-                }
-
-                if (!disabledByRule && dateInfo) {
-                    if (dateInfo.deskStats.total > 0) {
-                        const tone = getWorkdayOccupancyTone(dateInfo);
-                        const occupancyRatio = dateInfo.deskStats.occupied / dateInfo.deskStats.total;
-                        occupancyLabel = getWorkdayOccupancyLabel(occupancyRatio);
-                        if (tone) {
-                            dayStyle = ` style="--temperature-overlay:${tone.overlayColor};--temperature-opacity:${tone.overlayOpacity};"`;
-                        }
-                        loadBadge = `${dateInfo.deskStats.free}/${dateInfo.deskStats.occupied}`;
-                    }
-                    if (dateInfo.mySeat) {
-                        klass = 'calendar-day is-yellow';
-                        readOnlyFlag = '0';
-                        meta = `Sua mesa: ${dateInfo.mySeat.mesa}`;
-                    } else if (dateInfo.freeSeats.length) {
-                        klass = 'calendar-day is-green';
-                        readOnlyFlag = '0';
-                        meta = 'Livre';
-                    } else {
-                        klass = 'calendar-day is-red';
-                        meta = 'Sem vagas';
-                    }
-                    if (occupancyLabel) {
-                        meta = `${meta} · ${occupancyLabel}`;
-                        // Add class for dark/lotado days
-                        if (occupancyLabel === 'Crítico' || occupancyLabel === 'Lotado') {
-                            klass += ' is-dark';
-                        }
-                    }
-                }
-
-                // Check if this date is a period start or end
-                let periodIndicator = '';
-                state.periods.forEach(period => {
-                    if (isoDate === period.startDate) {
-                        periodIndicator = '<span class="period-indicator period-start"></span>';
-                    } else if (isoDate === period.endDate) {
-                        periodIndicator = '<span class="period-indicator period-end"></span>';
-                    }
-                });
-
-                html.push(`<button class="${klass}" type="button" data-date="${isoDate}" data-readonly="${readOnlyFlag}"${dayStyle}>`);
-                html.push('<span class="day-head">');
-                html.push(`<span class="day-number">${day}</span>`);
-                if (loadBadge) {
-                    html.push(`<span class="day-load" title="Mesas livres/ocupadas (total: ${dateInfo.deskStats.total})">${loadBadge}</span>`);
-                }
-                html.push('</span>');
-                html.push(`<span class="day-meta">${meta}</span>`);
-                if (periodIndicator) {
-                    html.push(periodIndicator);
-                }
-                html.push('</button>');
-            }
-
-            html.push('</div>');
-            html.push('</section>');
-        });
-
-        host.innerHTML = html.join('');
-    };
-
-    const removeBooking = (occupantElement) => {
-        const reserva = occupantElement.closest('.bloco');
-        const ddmmyyyy = toBRDate(toISODate(reserva.dataset.date));
-        const sheetname = reserva.dataset.sheetname;
-        const coluna = reserva.dataset.col;
-        const mesa = occupantElement.dataset.mesa;
-        const valorAnterior = occupantElement.textContent.trim();
-
-        if (!confirm(`Você deseja remover sua reserva no dia ${ddmmyyyy}?`)) {
-            return;
-        }
-
-        const valorNovo = '';
-        const url = `${baseurl}?action=update&k=${chave}&sheetname=${sheetname}&mesa=${mesa}&date=${ddmmyyyy}&col=${coluna}&valorAnterior=${valorAnterior}&valorNovo=${valorNovo}`;
-
-        occupantElement.classList.remove('me');
-        occupantElement.classList.add('livre');
-        occupantElement.textContent = '-- livre --';
-
-        _fetch(url, () => {
-            parseBackendData();
-            renderCompactCalendar();
-            updateCurrentPeriodProgress();
-            toast('Reserva removida com sucesso.', 3000);
-        }, true);
-    };
-
-    const reserveBooking = (occupantElement) => {
-        const reserva = occupantElement.closest('.bloco');
-        const ddmmyyyy = toBRDate(toISODate(reserva.dataset.date));
-        const sheetname = reserva.dataset.sheetname;
-        const coluna = reserva.dataset.col;
-        const mesa = occupantElement.dataset.mesa;
-        const valorAnterior = occupantElement.textContent.trim();
-
-        if (reserva.querySelector('.ocupante.me')) {
-            toast('Não é possível reservar outra mesa enquanto já houver uma reserva ativa neste dia.', 5000);
-            return;
-        }
-
-        if (!confirm(`Você deseja reservar a mesa ${mesa} no dia ${ddmmyyyy}?`)) {
-            return;
-        }
-
-        const valorAnteriorFiltrador = /livre/i.test(valorAnterior) ? '' : valorAnterior;
-        const url = `${baseurl}?action=update&k=${chave}&sheetname=${sheetname}&mesa=${mesa}&date=${ddmmyyyy}&col=${coluna}&valorAnterior=${valorAnteriorFiltrador}&valorNovo=${state.me}`;
-
-        occupantElement.classList.remove('livre');
-        occupantElement.classList.add('me');
-        occupantElement.textContent = state.me;
-
-        _fetch(url, () => {
-            parseBackendData();
-            renderCompactCalendar();
-            updateCurrentPeriodProgress();
-            toast('Sua solicitação foi enviada com sucesso.<br>Aguarde cerca de 2 minutos para que a reserva seja confirmada na planilha correspondente.', 10000);
-        }, true);
-    };
-
-    // Encaminha data + primeira mesa livre para o fluxo de alocacao ja existente.
-    const reserveFromSelectedDate = (isoDate, firstFreeDesk) => {
-        const info = state.dates.get(isoDate);
-        if (!info || !firstFreeDesk) {
-            toast('Nao foi possivel identificar mesa livre para a data selecionada.', 3000);
-            return;
-        }
-        const occupantElement = info.freeSeats.find((seat) => seat.mesa === firstFreeDesk)?.element;
-        if (!occupantElement) {
-            toast('A primeira mesa livre nao foi encontrada no bloco da data selecionada.', 3000);
-            return;
-        }
-        reserveBooking(occupantElement);
-    };
-
-    const handleCalendarAction = (isoDate) => {
-        const info = state.dates.get(isoDate);
-        if (!info || isWeekend(isoDate) || state.holidayDates.has(isoDate) || state.suspendedDates.has(isoDate)) {
-            return;
-        }
-        if (info.mySeat && info.mySeat.element) {
-            removeBooking(info.mySeat.element);
-            return;
-        }
-        if (info.freeSeats.length && info.freeSeats[0].element) {
-            const firstFreeDesk = info.freeSeats[0].mesa;
-            reserveFromSelectedDate(isoDate, firstFreeDesk);
-            return;
-        }
-        toast('Sem mesas disponíveis nesta data.', 3000);
-    };
-
-    const showDayDetailsDialog = (isoDate) => {
-        const dialog = document.querySelector('#dayInfoDialog');
-        const title = document.querySelector('#dayInfoTitle');
-        const subtitle = document.querySelector('#dayInfoSubtitle');
-        const body = document.querySelector('#dayInfoBody');
-        if (!dialog || !title || !subtitle || !body) {
-            return;
-        }
-
-        const info = state.dates.get(isoDate);
-        title.textContent = `Detalhes de ${toBRDate(isoDate)}`;
-        subtitle.textContent = 'Somente leitura: todas as mesas e ocupantes da data selecionada.';
-
-        if (!info || !info.block) {
-            body.innerHTML = '<tr><td colspan="2">Sem dados para esta data.</td></tr>';
-        } else {
-            const occupants = info.block.querySelectorAll('.ocupante');
-            if (!occupants.length) {
-                body.innerHTML = '<tr><td colspan="2">Sem mesas cadastradas para esta data.</td></tr>';
+            // Determine day type based on dateInfo
+            let baseColor;
+            if (dateInfo.mySeat) {
+                // Yellow day: user has reservation
+                baseColor = '#b45309'; // Dark orange
+            } else if (dateInfo.freeSeats.length) {
+                // Green day: has free seats
+                baseColor = '#217a3a'; // Dark green
             } else {
-                const rows = [];
-                occupants.forEach((occ) => {
-                    const mesa = occ.dataset.mesa || '-';
-                    const nome = occ.textContent.trim() || '-';
-                    rows.push(`<tr><td>${mesa}</td><td>${nome}</td></tr>`);
-                });
-                body.innerHTML = rows.join('');
+                // Red day: no vacancies
+                baseColor = '#dc2626'; // Dark red
             }
-        }
 
-        dialog.style.display = 'flex';
-    };
+            // For holidays (would need to check dateInfo.holiday or similar)
+            // baseColor = '#7c3aed'; // Dark purple
 
-    const hideDayDetailsDialog = () => {
-        const dialog = document.querySelector('#dayInfoDialog');
-        if (dialog) {
-            dialog.style.display = 'none';
-        }
-    };
+            // Calculate opacity: 0.1 (0% occupancy) to 1.0 (100% occupancy)
+            // Using a simple linear mapping for now
+            const overlayOpacity = (0.1 + ratio * 0.9).toFixed(3); // 0.1 to 1.0
 
-    const initClassicDatePicker = () => {
-        calendarInput = document.querySelector('#calendarDate');
-        calendarInput.addEventListener('change', (event) => {
-            const selectedDate = event.target.value;
-            const formattedDate = selectedDate.split('-').join('');
-            const dataElements = document.querySelectorAll('.bloco');
-            dataElements.forEach((element) => {
-                const [year, month, day] = element.dataset.date.substr(0, 10).split('-');
-                const formattedElementDate = `${year}${month}${day}`;
-                if (formattedElementDate === formattedDate) {
-                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return {
+                overlayColor: baseColor,
+                overlayOpacity: overlayOpacity
+            };
+        };
+
+        const getWorkdayOccupancyLabel = (ratio) => {
+            if (ratio >= 0.86) {
+                return 'Lotado';
+            }
+            if (ratio >= 0.61) {
+                return 'Crítico';
+            }
+            if (ratio >= 0.31) {
+                return 'Moderado';
+            }
+            return 'Tranquilo';
+        };
+
+        const saveConfig = () => {
+            const encoded = encodeURIComponent(JSON.stringify(state.config));
+            _fetch(`${baseurl}?action=setconfig&k=${chave}&config=${encoded}`, null);
+        };
+
+        const setViewMode = (mode) => {
+            const finalMode = mode === VIEW_MODES.CLASSIC ? VIEW_MODES.CLASSIC : VIEW_MODES.CALENDAR;
+            state.config.viewMode = finalMode;
+            saveConfig();
+            document.body.classList.toggle('calendar-mode', finalMode === VIEW_MODES.CALENDAR);
+            document.body.classList.toggle('classic-mode', finalMode === VIEW_MODES.CLASSIC);
+
+            const compact = document.querySelector('#compactCalendarView');
+            const content = document.querySelector('#content');
+            const toggle = document.querySelector('#viewModeToggle');
+            if (compact && content && toggle) {
+                if (finalMode === VIEW_MODES.CALENDAR) {
+                    compact.style.display = 'block';
+                    content.style.display = 'none';
+                    toggle.textContent = 'Visão: Calendário';
+                } else {
+                    compact.style.display = 'none';
+                    content.style.display = 'block';
+                    toggle.textContent = 'Visão: Clássica';
                 }
-            });
-        });
+            }
+        };
 
-        if (!isMobile) {
-            calendarFlatpickr = flatpickr(calendarInput, {
-                dateFormat: 'Y-m-d',
-                locale: 'pt',
-                position: 'above',
-                allowInput: true,
-                onReady: () => {
-                    calendarInput.style.display = 'none';
-                    const calendarContainer = document.querySelector('.flatpickr-calendar');
-                    if (calendarContainer) {
-                        calendarContainer.style.display = 'block';
+        const toggleViewMode = () => {
+            const current = state.config.viewMode || VIEW_MODES.CALENDAR;
+            setViewMode(current === VIEW_MODES.CALENDAR ? VIEW_MODES.CLASSIC : VIEW_MODES.CALENDAR);
+        };
+
+        const parseBackendData = () => {
+            state.dates = new Map();
+            state.holidayDates = new Set();
+            state.suspendedDates = new Set();
+            state.freeDeskPairs = [];
+            state.myDeskPairs = [];
+
+            const blocks = document.querySelectorAll('.bloco');
+            let me = '';
+            blocks.forEach((block) => {
+                const isoDate = toISODate(block.dataset.date);
+                if (!isoDate) {
+                    return;
+                }
+                const info = {
+                    isoDate,
+                    brDate: toBRDate(isoDate),
+                    sheetname: block.dataset.sheetname,
+                    col: block.dataset.col,
+                    block,
+                    freeSeats: [],
+                    mySeat: null,
+                    hasHoliday: false,
+                    hasSuspendedOffice: false,
+                    hasAnySeat: false,
+                    deskStats: {
+                        free: 0,
+                        occupied: 0,
+                        total: 0
                     }
-                },
-                onOpen: () => {
-                    calendarInput.style.display = 'none';
-                    const calendarContainer = document.querySelector('.flatpickr-calendar');
-                    if (calendarContainer) {
-                        calendarContainer.style.display = 'block';
+                };
+
+                const occupants = block.querySelectorAll('.ocupante');
+                occupants.forEach((occupant) => {
+                    const mesa = occupant.dataset.mesa;
+                    const text = occupant.textContent.trim();
+                    info.hasAnySeat = true;
+                    if (/FERIADO/i.test(text)) {
+                        info.hasHoliday = true;
                     }
-                },
-                onChange: (_, dateStr) => {
-                    const formattedDate = dateStr.split('-').join('');
-                    const dataElements = document.querySelectorAll('.bloco');
-                    dataElements.forEach((element) => {
-                        const [year, month, day] = element.dataset.date.substr(0, 10).split('-');
-                        const formattedElementDate = `${year}${month}${day}`;
-                        if (formattedElementDate === formattedDate) {
-                            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            calendarFlatpickr.close();
+                    if (/EXPEDIENTE\s+SUSPENSO/i.test(text)) {
+                        info.hasSuspendedOffice = true;
+                    }
+                    if (occupant.classList.contains('livre')) {
+                        info.freeSeats.push({ mesa, element: occupant });
+                        state.freeDeskPairs.push([info.brDate, mesa]);
+                        info.deskStats.free += 1;
+                        info.deskStats.total += 1;
+                    }
+                    if (occupant.classList.contains('me')) {
+                        info.mySeat = { mesa, element: occupant, text };
+                        state.myDeskPairs.push([info.brDate, mesa]);
+                        if (!me) {
+                            me = text;
+                        }
+                    }
+                    if (!occupant.classList.contains('livre') && !/FERIADO|EXPEDIENTE\s+SUSPENSO/i.test(text)) {
+                        info.deskStats.occupied += 1;
+                        info.deskStats.total += 1;
+                    }
+                });
+
+                if (info.hasHoliday) {
+                    state.holidayDates.add(isoDate);
+                }
+                if (info.hasSuspendedOffice) {
+                    state.suspendedDates.add(isoDate);
+                }
+                state.dates.set(isoDate, info);
+            });
+
+            state.me = me || (document.querySelector('.ocupante.me')?.textContent || '').trim();
+        };
+
+        const renderCompactCalendar = () => {
+            const host = document.querySelector('#compactCalendarView');
+            if (!host) {
+                return;
+            }
+
+            const allDates = Array.from(state.dates.keys()).sort();
+            if (!allDates.length) {
+                host.innerHTML = '<p>Nenhuma data encontrada.</p>';
+                return;
+            }
+
+            const monthKeys = [...new Set(allDates.map(monthKeyFromIso))];
+            const weekdays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'];
+            const html = [];
+            html.push('<div class="calendar-legend">');
+            html.push('<span class="legend-pill legend-green">Verde: livre para reservar</span>');
+            html.push('<span class="legend-pill legend-yellow">Amarelo: sua mesa (clique para remover)</span>');
+            html.push('<span class="legend-pill legend-red">Vermelho: sem vagas (somente leitura)</span>');
+            html.push('<span class="legend-pill legend-disabled">Cinza: fim de semana</span>');
+            html.push('<span class="legend-pill" style="background:#f8e9ee;border-color:#c98ea0;">Vinho: feriado/expediente suspenso</span>');
+            html.push('<span class="legend-pill">Selo X/Y: livres/ocupadas</span>');
+            html.push('<span class="legend-pill">Tom do dia: claro/frio = tranquilo, escuro/quente = lotado</span>');
+            html.push('</div>');
+
+            monthKeys.forEach((monthKey) => {
+                const [year, month] = monthKey.split('-').map(Number);
+                const firstDay = new Date(year, month - 1, 1);
+                const startWeekDay = firstDay.getDay();
+                const daysInMonth = new Date(year, month, 0).getDate();
+
+                html.push(`<section class="calendar-month">`);
+                html.push(`<h2 class="calendar-month-title">${monthLabelFromKey(monthKey)}</h2>`);
+                html.push('<div class="calendar-weekdays">');
+                weekdays.forEach((wk) => html.push(`<div class="calendar-weekday">${wk}</div>`));
+                html.push('</div>');
+                html.push('<div class="calendar-grid">');
+
+                for (let i = 0; i < startWeekDay; i += 1) {
+                    html.push('<button class="calendar-day empty" type="button" disabled></button>');
+                }
+
+                for (let day = 1; day <= daysInMonth; day += 1) {
+                    const isoDate = `${String(year).padStart(4, '0')}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                    const dateInfo = state.dates.get(isoDate);
+                    const holiday = state.holidayDates.has(isoDate);
+                    const suspendedOffice = state.suspendedDates.has(isoDate);
+                    const weekend = isWeekend(isoDate);
+                    const disabledByRule = weekend || holiday || suspendedOffice;
+
+                    let klass = 'calendar-day is-disabled';
+                    let meta = weekend ? 'Fim de semana' : (suspendedOffice ? 'Expediente suspenso' : (holiday ? 'Feriado' : 'Sem dados'));
+                    let readOnlyFlag = '1';
+                    let dayStyle = '';
+                    let loadBadge = '';
+                    let occupancyLabel = '';
+
+                    if (holiday || suspendedOffice) {
+                        klass = 'calendar-day is-holiday';
+                    }
+
+                    if (!disabledByRule && dateInfo) {
+                        if (dateInfo.deskStats.total > 0) {
+                            const tone = getWorkdayOccupancyTone(dateInfo);
+                            const occupancyRatio = dateInfo.deskStats.occupied / dateInfo.deskStats.total;
+                            occupancyLabel = getWorkdayOccupancyLabel(occupancyRatio);
+                            if (tone) {
+                                dayStyle = ` style="--temperature-overlay:${tone.overlayColor};--temperature-opacity:${tone.overlayOpacity};"`;
+                            }
+                            loadBadge = `${dateInfo.deskStats.free}/${dateInfo.deskStats.occupied}`;
+                        }
+                        if (dateInfo.mySeat) {
+                            klass = 'calendar-day is-yellow';
+                            readOnlyFlag = '0';
+                            meta = `Sua mesa: ${dateInfo.mySeat.mesa}`;
+                        } else if (dateInfo.freeSeats.length) {
+                            klass = 'calendar-day is-green';
+                            readOnlyFlag = '0';
+                            meta = 'Livre';
+                        } else {
+                            klass = 'calendar-day is-red';
+                            meta = 'Sem vagas';
+                        }
+                        if (occupancyLabel) {
+                            meta = `${meta} · ${occupancyLabel}`;
+                            // Add class for dark/lotado days
+                            if (occupancyLabel === 'Crítico' || occupancyLabel === 'Lotado') {
+                                klass += ' is-dark';
+                            }
+                        }
+                    }
+
+                    // Check if this date is a period start or end
+                    let periodIndicator = '';
+                    state.periods.forEach(period => {
+                        if (isoDate === period.startDate) {
+                            periodIndicator = '<span class="period-indicator period-start"></span>';
+                        } else if (isoDate === period.endDate) {
+                            periodIndicator = '<span class="period-indicator period-end"></span>';
                         }
                     });
+
+                    html.push(`<button class="${klass}" type="button" data-date="${isoDate}" data-readonly="${readOnlyFlag}"${dayStyle}>`);
+                    html.push('<span class="day-head">');
+                    html.push(`<span class="day-number">${day}</span>`);
+                    if (loadBadge) {
+                        html.push(`<span class="day-load" title="Mesas livres/ocupadas (total: ${dateInfo.deskStats.total})">${loadBadge}</span>`);
+                    }
+                    html.push('</span>');
+                    html.push(`<span class="day-meta">${meta}</span>`);
+                    if (periodIndicator) {
+                        html.push(periodIndicator);
+                    }
+                    html.push('</button>');
+                }
+
+                html.push('</div>');
+                html.push('</section>');
+            });
+
+            host.innerHTML = html.join('');
+        };
+
+        const removeBooking = (occupantElement) => {
+            const reserva = occupantElement.closest('.bloco');
+            const ddmmyyyy = toBRDate(toISODate(reserva.dataset.date));
+            const sheetname = reserva.dataset.sheetname;
+            const coluna = reserva.dataset.col;
+            const mesa = occupantElement.dataset.mesa;
+            const valorAnterior = occupantElement.textContent.trim();
+
+            if (!confirm(`Você deseja remover sua reserva no dia ${ddmmyyyy}?`)) {
+                return;
+            }
+
+            const valorNovo = '';
+            const url = `${baseurl}?action=update&k=${chave}&sheetname=${sheetname}&mesa=${mesa}&date=${ddmmyyyy}&col=${coluna}&valorAnterior=${valorAnterior}&valorNovo=${valorNovo}`;
+
+            occupantElement.classList.remove('me');
+            occupantElement.classList.add('livre');
+            occupantElement.textContent = '-- livre --';
+
+            _fetch(url, () => {
+                parseBackendData();
+                renderCompactCalendar();
+                updateCurrentPeriodProgress();
+                toast('Reserva removida com sucesso.', 3000);
+            }, true);
+        };
+
+        const reserveBooking = (occupantElement) => {
+            const reserva = occupantElement.closest('.bloco');
+            const ddmmyyyy = toBRDate(toISODate(reserva.dataset.date));
+            const sheetname = reserva.dataset.sheetname;
+            const coluna = reserva.dataset.col;
+            const mesa = occupantElement.dataset.mesa;
+            const valorAnterior = occupantElement.textContent.trim();
+
+            if (reserva.querySelector('.ocupante.me')) {
+                toast('Não é possível reservar outra mesa enquanto já houver uma reserva ativa neste dia.', 5000);
+                return;
+            }
+
+            if (!confirm(`Você deseja reservar a mesa ${mesa} no dia ${ddmmyyyy}?`)) {
+                return;
+            }
+
+            const valorAnteriorFiltrador = /livre/i.test(valorAnterior) ? '' : valorAnterior;
+            const url = `${baseurl}?action=update&k=${chave}&sheetname=${sheetname}&mesa=${mesa}&date=${ddmmyyyy}&col=${coluna}&valorAnterior=${valorAnteriorFiltrador}&valorNovo=${state.me}`;
+
+            occupantElement.classList.remove('livre');
+            occupantElement.classList.add('me');
+            occupantElement.textContent = state.me;
+
+            _fetch(url, () => {
+                parseBackendData();
+                renderCompactCalendar();
+                updateCurrentPeriodProgress();
+                toast('Sua solicitação foi enviada com sucesso.<br>Aguarde cerca de 2 minutos para que a reserva seja confirmada na planilha correspondente.', 10000);
+            }, true);
+        };
+
+        // Encaminha data + primeira mesa livre para o fluxo de alocacao ja existente.
+        const reserveFromSelectedDate = (isoDate, firstFreeDesk) => {
+            const info = state.dates.get(isoDate);
+            if (!info || !firstFreeDesk) {
+                toast('Nao foi possivel identificar mesa livre para a data selecionada.', 3000);
+                return;
+            }
+            const occupantElement = info.freeSeats.find((seat) => seat.mesa === firstFreeDesk)?.element;
+            if (!occupantElement) {
+                toast('A primeira mesa livre nao foi encontrada no bloco da data selecionada.', 3000);
+                return;
+            }
+            reserveBooking(occupantElement);
+        };
+
+        const handleCalendarAction = (isoDate) => {
+            const info = state.dates.get(isoDate);
+            if (!info || isWeekend(isoDate) || state.holidayDates.has(isoDate) || state.suspendedDates.has(isoDate)) {
+                return;
+            }
+            if (info.mySeat && info.mySeat.element) {
+                removeBooking(info.mySeat.element);
+                return;
+            }
+            if (info.freeSeats.length && info.freeSeats[0].element) {
+                const firstFreeDesk = info.freeSeats[0].mesa;
+                reserveFromSelectedDate(isoDate, firstFreeDesk);
+                return;
+            }
+            toast('Sem mesas disponíveis nesta data.', 3000);
+        };
+
+        const showDayDetailsDialog = (isoDate) => {
+            const dialog = document.querySelector('#dayInfoDialog');
+            const title = document.querySelector('#dayInfoTitle');
+            const subtitle = document.querySelector('#dayInfoSubtitle');
+            const body = document.querySelector('#dayInfoBody');
+            if (!dialog || !title || !subtitle || !body) {
+                return;
+            }
+
+            const info = state.dates.get(isoDate);
+            title.textContent = `Detalhes de ${toBRDate(isoDate)}`;
+            subtitle.textContent = 'Somente leitura: todas as mesas e ocupantes da data selecionada.';
+
+            if (!info || !info.block) {
+                body.innerHTML = '<tr><td colspan="2">Sem dados para esta data.</td></tr>';
+            } else {
+                const occupants = info.block.querySelectorAll('.ocupante');
+                if (!occupants.length) {
+                    body.innerHTML = '<tr><td colspan="2">Sem mesas cadastradas para esta data.</td></tr>';
+                } else {
+                    const rows = [];
+                    occupants.forEach((occ) => {
+                        const mesa = occ.dataset.mesa || '-';
+                        const nome = occ.textContent.trim() || '-';
+                        rows.push(`<tr><td>${mesa}</td><td>${nome}</td></tr>`);
+                    });
+                    body.innerHTML = rows.join('');
+                }
+            }
+
+            dialog.style.display = 'flex';
+        };
+
+        const hideDayDetailsDialog = () => {
+            const dialog = document.querySelector('#dayInfoDialog');
+            if (dialog) {
+                dialog.style.display = 'none';
+            }
+        };
+
+        const initClassicDatePicker = () => {
+            calendarInput = document.querySelector('#calendarDate');
+            calendarInput.addEventListener('change', (event) => {
+                const selectedDate = event.target.value;
+                const formattedDate = selectedDate.split('-').join('');
+                const dataElements = document.querySelectorAll('.bloco');
+                dataElements.forEach((element) => {
+                    const [year, month, day] = element.dataset.date.substr(0, 10).split('-');
+                    const formattedElementDate = `${year}${month}${day}`;
+                    if (formattedElementDate === formattedDate) {
+                        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                });
+            });
+
+            if (!isMobile) {
+                calendarFlatpickr = flatpickr(calendarInput, {
+                    dateFormat: 'Y-m-d',
+                    locale: 'pt',
+                    position: 'above',
+                    allowInput: true,
+                    onReady: () => {
+                        calendarInput.style.display = 'none';
+                        const calendarContainer = document.querySelector('.flatpickr-calendar');
+                        if (calendarContainer) {
+                            calendarContainer.style.display = 'block';
+                        }
+                    },
+                    onOpen: () => {
+                        calendarInput.style.display = 'none';
+                        const calendarContainer = document.querySelector('.flatpickr-calendar');
+                        if (calendarContainer) {
+                            calendarContainer.style.display = 'block';
+                        }
+                    },
+                    onChange: (_, dateStr) => {
+                        const formattedDate = dateStr.split('-').join('');
+                        const dataElements = document.querySelectorAll('.bloco');
+                        dataElements.forEach((element) => {
+                            const [year, month, day] = element.dataset.date.substr(0, 10).split('-');
+                            const formattedElementDate = `${year}${month}${day}`;
+                            if (formattedElementDate === formattedDate) {
+                                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                calendarFlatpickr.close();
+                            }
+                        });
+                    }
+                });
+            }
+        };
+
+        const initEvents = () => {
+            document.addEventListener('pointerdown', (event) => {
+                const calendarDayButton = event.target.closest('.calendar-day');
+                if (!calendarDayButton || !calendarDayButton.dataset.date) {
+                    return;
+                }
+
+                clearTimeout(state.longPressTimer);
+                state.longPressTriggered = false;
+                state.longPressTarget = calendarDayButton;
+                calendarDayButton.classList.add('is-pressing');
+
+                state.longPressTimer = setTimeout(() => {
+                    state.longPressTriggered = true;
+                    showDayDetailsDialog(calendarDayButton.dataset.date);
+                }, 1000);
+            });
+
+            const cancelLongPress = () => {
+                clearTimeout(state.longPressTimer);
+                if (state.longPressTarget) {
+                    state.longPressTarget.classList.remove('is-pressing');
+                }
+                state.longPressTarget = null;
+            };
+
+            document.addEventListener('pointerup', cancelLongPress);
+            document.addEventListener('pointercancel', cancelLongPress);
+            document.addEventListener('pointerleave', cancelLongPress);
+
+            document.addEventListener('click', (event) => {
+                const closeDialogBtn = event.target.closest('#closeDayInfoDialog');
+                if (closeDialogBtn) {
+                    hideDayDetailsDialog();
+                    return;
+                }
+                if (event.target.id === 'dayInfoDialog') {
+                    hideDayDetailsDialog();
+                    return;
+                }
+
+                if (state.longPressTriggered) {
+                    state.longPressTriggered = false;
+                    return;
+                }
+
+                if (event.target.classList.contains('ocupante')) {
+                    const isFree = event.target.classList.contains('livre');
+                    const isMe = event.target.classList.contains('me');
+                    if (!isFree && !isMe) {
+                        alert('Este horário já está ocupado.');
+                        return;
+                    }
+                    if (isMe) {
+                        removeBooking(event.target);
+                        return;
+                    }
+                    reserveBooking(event.target);
+                }
+
+                const calendarDayButton = event.target.closest('.calendar-day');
+                if (calendarDayButton && calendarDayButton.dataset.date) {
+                    if (calendarDayButton.dataset.readonly === '1') {
+                        return;
+                    }
+                    handleCalendarAction(calendarDayButton.dataset.date);
                 }
             });
-        }
-    };
-
-    const initEvents = () => {
-        document.addEventListener('pointerdown', (event) => {
-            const calendarDayButton = event.target.closest('.calendar-day');
-            if (!calendarDayButton || !calendarDayButton.dataset.date) {
-                return;
-            }
-
-            clearTimeout(state.longPressTimer);
-            state.longPressTriggered = false;
-            state.longPressTarget = calendarDayButton;
-            calendarDayButton.classList.add('is-pressing');
-
-            state.longPressTimer = setTimeout(() => {
-                state.longPressTriggered = true;
-                showDayDetailsDialog(calendarDayButton.dataset.date);
-            }, 1000);
-        });
-
-        const cancelLongPress = () => {
-            clearTimeout(state.longPressTimer);
-            if (state.longPressTarget) {
-                state.longPressTarget.classList.remove('is-pressing');
-            }
-            state.longPressTarget = null;
         };
 
-        document.addEventListener('pointerup', cancelLongPress);
-        document.addEventListener('pointercancel', cancelLongPress);
-        document.addEventListener('pointerleave', cancelLongPress);
-
-        document.addEventListener('click', (event) => {
-            const closeDialogBtn = event.target.closest('#closeDayInfoDialog');
-            if (closeDialogBtn) {
-                hideDayDetailsDialog();
-                return;
-            }
-            if (event.target.id === 'dayInfoDialog') {
-                hideDayDetailsDialog();
-                return;
-            }
-
-            if (state.longPressTriggered) {
-                state.longPressTriggered = false;
-                return;
-            }
-
-            if (event.target.classList.contains('ocupante')) {
-                const isFree = event.target.classList.contains('livre');
-                const isMe = event.target.classList.contains('me');
-                if (!isFree && !isMe) {
-                    alert('Este horário já está ocupado.');
-                    return;
-                }
-                if (isMe) {
-                    removeBooking(event.target);
-                    return;
-                }
-                reserveBooking(event.target);
-            }
-
-            const calendarDayButton = event.target.closest('.calendar-day');
-            if (calendarDayButton && calendarDayButton.dataset.date) {
-                if (calendarDayButton.dataset.readonly === '1') {
-                    return;
-                }
-                handleCalendarAction(calendarDayButton.dataset.date);
-            }
-        });
-    };
-
-    const init = () => {
-        initClassicDatePicker();
-        parseBackendData();
-        loadPeriods();
-        renderCompactCalendar();
-        setViewMode(state.config.viewMode || VIEW_MODES.CALENDAR);
-    };
-
-    const _fetch = (url, callback, _async = false) => {
-        console.log('Fetching:', url);
-        const silent = callback === null;
-        if (!silent) {
-            if (!_async) {
-                loader.show();
-            } else {
-                toast('Processando...', 500000);
-            }
-        }
-        const src = document.createElement('script');
-        src.src = url;
-        src.async = true;
-        document.head.appendChild(src);
-        src.onload = () => {
-            console.log('Script loaded, resp exists?', typeof window.resp !== 'undefined');
-            document.head.removeChild(src);
-            if (typeof callback === 'function') {
-                callback(window.resp);
-            }
+        const init = () => {
+            initClassicDatePicker();
+            parseBackendData();
+            loadPeriods();
+            renderCompactCalendar();
+            setViewMode(state.config.viewMode || VIEW_MODES.CALENDAR);
         };
-        src.onerror = (error) => {
-            console.error('Script load error:', error);
-            document.head.removeChild(src);
-            if (typeof callback === 'function') {
-                callback(null);
+
+        const _fetch = (url, callback, _async = false) => {
+            console.log('Fetching:', url);
+            const silent = callback === null;
+            if (!silent) {
+                if (!_async) {
+                    loader.show();
+                } else {
+                    toast('Processando...', 500000);
+                }
             }
+
+            // Fire-and-forget (silent): usa no-cors para evitar preflight
+            if (silent) {
+                fetch(url, { method: 'GET', mode: 'no-cors' }).catch((err) => {
+                    console.warn('Silent fetch error (ignorado):', err);
+                });
+                return;
+            }
+
+            fetch(url, { method: 'GET', mode: 'cors', redirect: 'follow' })
+                .then((response) => {
+                    if (!response.ok && response.type !== 'opaqueredirect') {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then((text) => {
+                    console.log('Fetch ok, tamanho da resposta:', text ? text.length : 0);
+                    if (typeof callback === 'function') {
+                        callback(text || null);
+                    }
+                })
+                .catch((err) => {
+                    console.error('Fetch error:', err);
+                    if (typeof callback === 'function') {
+                        callback(null);
+                    }
+                });
         };
-    };
 
-    const chave = new URLSearchParams(window.location.search).get('k') || '';
-    window.addEventListener('load', function() {
-        const content = document.querySelector('#content');
+        const chave = new URLSearchParams(window.location.search).get('k') || '';
+        window.addEventListener('load', function () {
+            const content = document.querySelector('#content');
 
-        initEvents();
-        _fetch(`${baseurl}?action=view&k=${chave}`, (data) => {
-            console.log('Data received:', data ? 'yes' : 'no');
-            if (data) {
-                if (/negado/i.test(data)) {
-                    console.log('Access denied - showing error message');
+            initEvents();
+            _fetch(`${baseurl}?action=view&k=${chave}`, (data) => {
+                console.log('Data received:', data ? 'yes' : 'no');
+                if (data) {
+                    if (/negado/i.test(data)) {
+                        console.log('Access denied - showing error message');
 
-                    // Show error message in the loading overlay
-                    const loadingOverlay = document.querySelector('#loadingOverlay');
-                    loadingOverlay.innerHTML = `
+                        // Show error message in the loading overlay
+                        const loadingOverlay = document.querySelector('#loadingOverlay');
+                        loadingOverlay.innerHTML = `
                         <div style="text-align: center; max-width: 300px;">
                             <div style="width: 60px; height: 60px; margin: 0 auto 20px; border-radius: 50%; background: rgba(255, 255, 255, 0.2); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">
                                 ⚠️
@@ -1269,129 +1370,129 @@
                             <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.9em;">Verifique sua chave de acesso e tente novamente.</p>
                         </div>
                     `;
-                    // Keep the overlay visible to show the error message
-                    // This is intentional - not "stuck", but showing an error
-                    return;
-                }
-                console.log('Setting content and hiding loader');
-                content.innerHTML = data;
-                _fetch(`${baseurl}?action=getconfig&k=${chave}`, (configData) => {
-                    try {
-                        const parsed = JSON.parse(configData || '{}');
-                        state.config = Object.assign({ viewMode: VIEW_MODES.CALENDAR, periods: [] }, parsed);
-                    } catch (e) {
-                        console.error('Error parsing config:', e);
+                        // Keep the overlay visible to show the error message
+                        // This is intentional - not "stuck", but showing an error
+                        return;
                     }
-                    loader.hide();
-                    init();
-                });
-            } else {
-                console.log('No data received');
-                content.innerHTML = '<p>Erro ao carregar os dados.</p>';
-                // Try to hide loader even if no data
-                try {
-                    loader.hide();
-                } catch (e) {
-                    console.error('Error hiding loader:', e);
+                    console.log('Setting content and hiding loader');
+                    content.innerHTML = data;
+                    _fetch(`${baseurl}?action=getconfig&k=${chave}`, (configData) => {
+                        try {
+                            const parsed = JSON.parse(configData || '{}');
+                            state.config = Object.assign({ viewMode: VIEW_MODES.CALENDAR, periods: [] }, parsed);
+                        } catch (e) {
+                            console.error('Error parsing config:', e);
+                        }
+                        loader.hide();
+                        init();
+                    });
+                } else {
+                    console.log('No data received');
+                    content.innerHTML = '<p>Erro ao carregar os dados.</p>';
+                    // Try to hide loader even if no data
+                    try {
+                        loader.hide();
+                    } catch (e) {
+                        console.error('Error hiding loader:', e);
+                    }
                 }
-            }
+            });
         });
-    });
 
-    // Period Management Functions
-    const loadPeriods = () => {
-        state.periods = state.config.periods || [];
-        updatePeriodsList();
-        updateCurrentPeriodProgress();
-    };
-
-    const savePeriods = () => {
-        try {
-            state.config.periods = state.periods;
-            saveConfig();
+        // Period Management Functions
+        const loadPeriods = () => {
+            state.periods = state.config.periods || [];
             updatePeriodsList();
             updateCurrentPeriodProgress();
-            // Refresh calendar to show period indicators
-            if (document.body.classList.contains('calendar-mode')) {
-                renderCompactCalendar();
-            }
-        } catch (e) {
-            console.error('Error saving periods:', e);
-            toast('Erro ao salvar período');
-        }
-    };
-
-    const openPeriodManagement = () => {
-        loadPeriods();
-        const dialog = document.getElementById('periodManagementDialog');
-        dialog.style.display = 'flex';
-
-        // Set default dates (today and 2 months from now)
-        const today = new Date().toISOString().split('T')[0];
-        const futureDate = new Date();
-        futureDate.setMonth(futureDate.getMonth() + 2);
-        const futureDateStr = futureDate.toISOString().split('T')[0];
-
-        document.getElementById('periodStartDate').value = today;
-        document.getElementById('periodEndDate').value = futureDateStr;
-        document.getElementById('periodGoal').value = 10;
-    };
-
-    const closePeriodManagement = () => {
-        document.getElementById('periodManagementDialog').style.display = 'none';
-    };
-
-    const savePeriod = () => {
-        const startDate = document.getElementById('periodStartDate').value;
-        const endDate = document.getElementById('periodEndDate').value;
-        const goal = parseInt(document.getElementById('periodGoal').value);
-
-        if (!startDate || !endDate || !goal || goal < 1) {
-            toast('Preencha todos os campos corretamente');
-            return;
-        }
-
-        if (new Date(startDate) > new Date(endDate)) {
-            toast('Data de início deve ser anterior à data de fim');
-            return;
-        }
-
-        const newPeriod = {
-            id: Date.now().toString(),
-            startDate,
-            endDate,
-            goal
         };
 
-        state.periods.push(newPeriod);
-        savePeriods();
-        toast('Período salvo com sucesso');
+        const savePeriods = () => {
+            try {
+                state.config.periods = state.periods;
+                saveConfig();
+                updatePeriodsList();
+                updateCurrentPeriodProgress();
+                // Refresh calendar to show period indicators
+                if (document.body.classList.contains('calendar-mode')) {
+                    renderCompactCalendar();
+                }
+            } catch (e) {
+                console.error('Error saving periods:', e);
+                toast('Erro ao salvar período');
+            }
+        };
 
-        // Clear form
-        document.getElementById('periodStartDate').value = '';
-        document.getElementById('periodEndDate').value = '';
-        document.getElementById('periodGoal').value = 10;
-    };
+        const openPeriodManagement = () => {
+            loadPeriods();
+            const dialog = document.getElementById('periodManagementDialog');
+            dialog.style.display = 'flex';
 
-    const deletePeriod = (id) => {
-        state.periods = state.periods.filter(period => period.id !== id);
-        savePeriods();
-        toast('Período removido');
-    };
+            // Set default dates (today and 2 months from now)
+            const today = new Date().toISOString().split('T')[0];
+            const futureDate = new Date();
+            futureDate.setMonth(futureDate.getMonth() + 2);
+            const futureDateStr = futureDate.toISOString().split('T')[0];
 
-    const updatePeriodsList = () => {
-        const container = document.getElementById('periodsList');
-        if (!container) return;
+            document.getElementById('periodStartDate').value = today;
+            document.getElementById('periodEndDate').value = futureDateStr;
+            document.getElementById('periodGoal').value = 10;
+        };
 
-        if (state.periods.length === 0) {
-            container.innerHTML = '<p style="color: #666; font-style: italic;">Nenhum período cadastrado</p>';
-            return;
-        }
+        const closePeriodManagement = () => {
+            document.getElementById('periodManagementDialog').style.display = 'none';
+        };
 
-        const html = state.periods.map(period => {
-            const start = toBRDate(period.startDate);
-            const end = toBRDate(period.endDate);
-            return `
+        const savePeriod = () => {
+            const startDate = document.getElementById('periodStartDate').value;
+            const endDate = document.getElementById('periodEndDate').value;
+            const goal = parseInt(document.getElementById('periodGoal').value);
+
+            if (!startDate || !endDate || !goal || goal < 1) {
+                toast('Preencha todos os campos corretamente');
+                return;
+            }
+
+            if (new Date(startDate) > new Date(endDate)) {
+                toast('Data de início deve ser anterior à data de fim');
+                return;
+            }
+
+            const newPeriod = {
+                id: Date.now().toString(),
+                startDate,
+                endDate,
+                goal
+            };
+
+            state.periods.push(newPeriod);
+            savePeriods();
+            toast('Período salvo com sucesso');
+
+            // Clear form
+            document.getElementById('periodStartDate').value = '';
+            document.getElementById('periodEndDate').value = '';
+            document.getElementById('periodGoal').value = 10;
+        };
+
+        const deletePeriod = (id) => {
+            state.periods = state.periods.filter(period => period.id !== id);
+            savePeriods();
+            toast('Período removido');
+        };
+
+        const updatePeriodsList = () => {
+            const container = document.getElementById('periodsList');
+            if (!container) return;
+
+            if (state.periods.length === 0) {
+                container.innerHTML = '<p style="color: #666; font-style: italic;">Nenhum período cadastrado</p>';
+                return;
+            }
+
+            const html = state.periods.map(period => {
+                const start = toBRDate(period.startDate);
+                const end = toBRDate(period.endDate);
+                return `
                 <div style="padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
                     <div>
                         <strong>${start} - ${end}</strong><br>
@@ -1402,44 +1503,44 @@
                     </button>
                 </div>
             `;
-        }).join('');
+            }).join('');
 
-        container.innerHTML = html;
-    };
+            container.innerHTML = html;
+        };
 
-    const updateCurrentPeriodProgress = () => {
-        const container = document.getElementById('currentPeriodProgress');
-        if (!container) return;
+        const updateCurrentPeriodProgress = () => {
+            const container = document.getElementById('currentPeriodProgress');
+            if (!container) return;
 
-        const today = new Date().toISOString().split('T')[0];
+            const today = new Date().toISOString().split('T')[0];
 
-        // Find current period (period that contains today)
-        const currentPeriod = state.periods.find(period =>
-            period.startDate <= today && period.endDate >= today
-        );
+            // Find current period (period that contains today)
+            const currentPeriod = state.periods.find(period =>
+                period.startDate <= today && period.endDate >= today
+            );
 
-        if (!currentPeriod) {
-            container.innerHTML = '<p style="color: #666; font-style: italic;">Nenhum período ativo no momento</p>';
-            return;
-        }
-
-        // Count user's reserved days in this period
-        let reservedDays = 0;
-        const startDate = new Date(currentPeriod.startDate);
-        const endDate = new Date(currentPeriod.endDate);
-
-        for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
-            const isoDate = date.toISOString().split('T')[0];
-            const dateInfo = state.dates.get(isoDate);
-            if (dateInfo && dateInfo.mySeat) {
-                reservedDays++;
+            if (!currentPeriod) {
+                container.innerHTML = '<p style="color: #666; font-style: italic;">Nenhum período ativo no momento</p>';
+                return;
             }
-        }
 
-        const progress = Math.min(100, (reservedDays / currentPeriod.goal) * 100);
-        const progressColor = progress >= 100 ? '#10b981' : progress >= 75 ? '#f59e0b' : '#ef4444';
+            // Count user's reserved days in this period
+            let reservedDays = 0;
+            const startDate = new Date(currentPeriod.startDate);
+            const endDate = new Date(currentPeriod.endDate);
 
-        container.innerHTML = `
+            for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
+                const isoDate = date.toISOString().split('T')[0];
+                const dateInfo = state.dates.get(isoDate);
+                if (dateInfo && dateInfo.mySeat) {
+                    reservedDays++;
+                }
+            }
+
+            const progress = Math.min(100, (reservedDays / currentPeriod.goal) * 100);
+            const progressColor = progress >= 100 ? '#10b981' : progress >= 75 ? '#f59e0b' : '#ef4444';
+
+            container.innerHTML = `
             <div style="margin-bottom: 10px;">
                 <strong>${toBRDate(currentPeriod.startDate)} - ${toBRDate(currentPeriod.endDate)}</strong><br>
                 <small>Meta: ${currentPeriod.goal} dias presenciais</small>
@@ -1459,11 +1560,12 @@
                     `Faltam ${currentPeriod.goal - reservedDays} dias para atingir a meta`}
             </div>
         `;
-    };
+        };
 
 
-</script>
+    </script>
 </head>
+
 <body>
     <div id="loadingOverlay">
         <div class="splash-title">eMesas</div>
@@ -1479,7 +1581,8 @@
         <footer>
             <button id="viewModeToggle" onclick="toggleViewMode()">Visão: Calendário</button>
             <button id="periodManagementButton" onclick="openPeriodManagement()">Períodos</button>
-            <button class="classic-only" id="openCalendar" onclick="openCalendar()"><span class="calendar-icon" style="margin-right: 8px;">📅</span></button>
+            <button class="classic-only" id="openCalendar" onclick="openCalendar()"><span class="calendar-icon"
+                    style="margin-right: 8px;">📅</span></button>
             <button class="classic-only" id="filterButton" onclick="filter()">⭐</button>
         </footer>
     </div>
@@ -1501,7 +1604,8 @@
             </div>
         </div>
     </div>
-    <div id="periodManagementDialog" class="day-dialog-backdrop" role="dialog" aria-modal="true" aria-labelledby="periodManagementTitle" style="display: none;">
+    <div id="periodManagementDialog" class="day-dialog-backdrop" role="dialog" aria-modal="true"
+        aria-labelledby="periodManagementTitle" style="display: none;">
         <div class="day-dialog" style="max-width: 500px;">
             <h3 id="periodManagementTitle">Gerenciar Períodos</h3>
             <div class="period-form">
@@ -1510,16 +1614,20 @@
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
                         <div>
                             <label style="display: block; font-size: 0.9em; margin-bottom: 3px;">Data Início</label>
-                            <input type="date" id="periodStartDate" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <input type="date" id="periodStartDate"
+                                style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
                         </div>
                         <div>
                             <label style="display: block; font-size: 0.9em; margin-bottom: 3px;">Data Fim</label>
-                            <input type="date" id="periodEndDate" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <input type="date" id="periodEndDate"
+                                style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
                         </div>
                     </div>
                     <div>
-                        <label style="display: block; font-size: 0.9em; margin-bottom: 3px;">Meta de Dias Presenciais</label>
-                        <input type="number" id="periodGoal" min="1" value="10" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        <label style="display: block; font-size: 0.9em; margin-bottom: 3px;">Meta de Dias
+                            Presenciais</label>
+                        <input type="number" id="periodGoal" min="1" value="10"
+                            style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
                     </div>
                 </div>
                 <div class="day-dialog-actions">
@@ -1533,7 +1641,8 @@
                     <!-- Periods will be listed here -->
                 </div>
             </div>
-            <div class="period-progress" style="margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 6px;">
+            <div class="period-progress"
+                style="margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 6px;">
                 <h4 style="margin-bottom: 10px;">Progresso do Período Atual</h4>
                 <div id="currentPeriodProgress">
                     <!-- Progress will be shown here -->
@@ -1541,6 +1650,7 @@
             </div>
         </div>
     </div>
-    <div class="hiddens"><input type="date" id="calendarDate"/></div>
+    <div class="hiddens"><input type="date" id="calendarDate" /></div>
 </body>
+
 </html>
